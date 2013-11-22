@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical" >
+
+	<tw.edu.ntu.netdb.demo.StreetView
+	    android:id="@+id/imageView_street_view"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentBottom="true"
+	    android:layout_alignParentTop="true" />
+	
+	<ImageButton
+		    android:id="@+id/imageButton_take"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_alignParentBottom="true"
+		    android:layout_centerHorizontal="true"
+		    android:src="@drawable/ic_camara" />
+	
+	<!-- 
+	<LinearLayout
+		android:id="@+id/layout_panel"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:background="#E8E4C7"
+		android:gravity="center"
+		android:orientation="horizontal" >
+
+		<ImageButton
+			android:id="@+id/imageButton_take"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:src="@drawable/ic_camara" />
+	</LinearLayout>
+	-->
+</RelativeLayout>
