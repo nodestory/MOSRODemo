@@ -28,7 +28,7 @@ public class MOSROReturn {
 	
 	public boolean[] MostConnectedComponent(int c, int[] GridSize){
 		this.GridSize = GridSize;
-		Log.v("MOSRO", LogString(y[c]));
+//		Log.v("MOSRO", LogString(y[c]));
 		int len = y[c].length;
 		int label = 1;
 		int[] cc = new int[len];
@@ -41,12 +41,12 @@ public class MOSROReturn {
 		}
 		int max_count = 0;
 		int max_label = -1;
-		Log.v("MOSRO", LogString(cc));
+//		Log.v("MOSRO", LogString(cc));
 		for(int i=0;i<len;i++){
 			if(cc[i]==0){
 				// Do BFS Search
 				int count = BFS(cc, i, label);
-				Log.v("MOSRO", "Label#"+String.valueOf(label)+ " : "+String.valueOf(count));
+//				Log.v("MOSRO", "Label#"+String.valueOf(label)+ " : "+String.valueOf(count));
 				if (count>max_count){
 					max_count = count;
 					max_label = label;
@@ -54,9 +54,9 @@ public class MOSROReturn {
 				label++;
 			}
 		}
-		Log.v("MOSRO", "Connected Component map:\n");
-		Log.v("MOSRO", LogString(cc));
-		Log.v("MOSRO", "Label#"+String.valueOf(max_label)+ " : "+String.valueOf(max_count));
+//		Log.v("MOSRO", "Connected Component map:\n");
+//		Log.v("MOSRO", LogString(cc));
+//		Log.v("MOSRO", "Label#"+String.valueOf(max_label)+ " : "+String.valueOf(max_count));
 		boolean[] Maskcc = new boolean[len];
 		for(int i=0;i<len;i++){
 			if(cc[i]==max_label){

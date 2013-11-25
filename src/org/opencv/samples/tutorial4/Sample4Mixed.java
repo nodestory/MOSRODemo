@@ -55,7 +55,7 @@ public class Sample4Mixed extends Activity {
     public Context context ;
     static int imageID = R.drawable.tt5;
     
-    // MOSRO 會用到的 parameter
+    // MOSRO ��啁� parameter
     //int[] GridSize = {20, 20};
 
     public Sample4Mixed() {
@@ -162,7 +162,7 @@ public class Sample4Mixed extends Activity {
         RawKernel.add(R.raw.kernel_5);
         RawKernel.add(R.raw.kernel_6);
         RawKernel.add(R.raw.kernel_7);
-        RawKernel.add(R.raw.kernel_8);
+//        RawKernel.add(R.raw.kernel_8);
         //RawKernel.add(R.raw.kernel_24);
         //RawKernel.add(R.raw.kernel_38);
         //RawKernel.add(R.raw.kernel_62);
@@ -170,7 +170,7 @@ public class Sample4Mixed extends Activity {
         RawVoc.add(R.raw.voc_5);
         RawVoc.add(R.raw.voc_6);
         RawVoc.add(R.raw.voc_7);
-        RawVoc.add(R.raw.voc_8);
+//        RawVoc.add(R.raw.voc_8);
         //RawVoc.add(R.raw.voc_24);
         //RawVoc.add(R.raw.voc_38);
         //RawVoc.add(R.raw.voc_62);
@@ -216,7 +216,8 @@ public class Sample4Mixed extends Activity {
         		e.printStackTrace();
         	}
     		category.get(c).w = w;
-    		category.get(c).voc = voc;
+    		//TODO
+//    		category.get(c).voc = voc;
         }
 		///////////////////////////////////////////////////////////////////////////////////////
         boolean[][] output = new boolean[cNum][];
@@ -243,8 +244,9 @@ public class Sample4Mixed extends Activity {
         		int k = (int) descriptors.row(i).total();
         		float[] drow = new float[k];
         		descriptors.row(i).get(0, 0, drow);
-        		int v = FindVoc(drow,category.get(c).voc);
-        		hist[grid][v]++;
+//        		TODO
+//        		int v = FindVoc(drow,category.get(c).voc);
+//        		hist[grid][v]++;
         	}
         	Log.v("MOSRO", "transform to regional BoVW histogram for category#"+String.valueOf(category.get(c).CID)+" succuessfully");
 		

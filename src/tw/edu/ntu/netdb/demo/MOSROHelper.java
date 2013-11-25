@@ -93,7 +93,8 @@ public class MOSROHelper {
         for(int c=0; c<cNum; c++){
         	// transform to regional BoVW
         	int NGrid = GridSize[0]*GridSize[1];
-        	int NVoc = category.get(c).voc.size();
+        	int NVoc = category.get(c).voc.size()*(category.get(c).voc.get(0).getChildrenNum());
+        	Log.d(getClass().getName(), "NVoc" + String.valueOf(NVoc));
         	int[][] hist = new int[NGrid][];
         	// init BoVW histogram
         	for(int i=0;i<NGrid;i++){
@@ -347,18 +348,32 @@ public class MOSROHelper {
     	return (hh + ww*(GridSize[0]-1));
     }
     // Find the corresponding BoVW
-    private int FindVoc(float[] v, List<double[]> voc){
+    // TODO
+    private int FindVoc(float[] v, List<Node> voc){
     	int size = voc.size();
     	double minDist = Double.MAX_VALUE;
     	int minIndex = -1;
     	for(int i=0;i<size;i++){
-    		double dist = L2Dist(v, voc.get(i));
+    		double dist = L2Dist(v, voc.get(i).getV());
+//    		double dist = L2Dist(v, voc.get(i));
     		if(dist<minDist){
     			minDist = dist;
     			minIndex = i;
     		}
     	}
-    	return minIndex;
+    	
+    	double minDist2 = Double.MAX_VALUE;
+    	int minIndex2 = -1;
+    	size = voc.get(minIndex).getChildrenNum();
+    	for(int i=0;i<size;i++){
+    		double dist = L2Dist(v, voc.get(minIndex).getChild(i).getV());
+//    		double dist = L2Dist(v, voc.get(i));
+    		if(dist<minDist2){
+    			minDist2 = dist;
+    			minIndex2 = i;
+    		}
+    	}
+    	return minIndex2 + minIndex*voc.size();
     }
     private double L2Dist(float[] v1, double[] v2){
     	double dist = 0;

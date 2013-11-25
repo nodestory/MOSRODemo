@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -38,8 +39,8 @@ public class RecognitionActivity extends Activity {
 		mProcessedBitmap = Bitmap.createBitmap(bitmap, 0, bitmap.getHeight() / 2 - bitmap.getWidth() / 2,
 				bitmap.getWidth(), bitmap.getWidth());
 		// resize the bitmap
-		mProcessedBitmap = Bitmap.createScaledBitmap(mProcessedBitmap, mProcessedBitmap.getWidth() / 2,
-				mProcessedBitmap.getHeight() / 2, false);
+//		mProcessedBitmap = Bitmap.createScaledBitmap(mProcessedBitmap, mProcessedBitmap.getWidth() / 2,
+//				mProcessedBitmap.getHeight() / 2, false);
 		// test a default bitmap
 		// mProcessedBitmap = BitmapFactory.decodeResource(getResources(),
 		// R.drawable.tt5);
@@ -100,7 +101,10 @@ public class RecognitionActivity extends Activity {
 			// Bitmap bitmap = result.getMaskBitmap();
 			// mStreetImageView.setImageBitmap(bitmap);
 			setProgressBarIndeterminateVisibility(false);
-			displayLogo(result.getCenterX() * 2, result.getCenterY() * 2, result.getCategory().CLOGO);
+//			displayLogo(result.getCenterX() * 2, result.getCenterY() * 2, result.getCategory().CLOGO);
+			//TODO
+			displayLogo(result.getCenterX(), result.getCenterY(), result.getCategory().CLOGO);
+			Log.d(getClass().getName(), String.valueOf(result.getCenterX()) + String.valueOf(result.getCenterY()));
 		}
 	}
 }

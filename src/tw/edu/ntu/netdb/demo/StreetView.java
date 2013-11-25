@@ -40,10 +40,10 @@ import android.widget.TextView;
 
 public class StreetView extends RelativeLayout implements OnClickListener,
 		OnSeekBarChangeListener {
-	private double lat = 25.017578;
-	private double lng = 121.477497;
-	private int heading = 60;
-	private int fov = 90;
+	private double lat = 25.017757999999994;
+	private double lng = 121.47777728399998;
+	private int heading = 20;
+	private int fov = 39;
 	// TODO
 	// private int pitch = 0;
 	private Bitmap streetBitmap;
