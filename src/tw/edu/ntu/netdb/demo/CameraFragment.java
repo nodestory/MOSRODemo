@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
@@ -44,12 +45,11 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback {
 				}, new PictureCallback() {
 					@Override
 					public void onPictureTaken(byte[] arg0, Camera arg1) {
-						Bitmap displayedBitmap = BitmapFactory.decodeByteArray(arg0, 0, arg0.length);
-						Bitmap processedBitmap = Bitmap.createBitmap(displayedBitmap, 0, displayedBitmap.getHeight() / 2
-								- displayedBitmap.getWidth() / 2, displayedBitmap.getWidth(),
-								displayedBitmap.getWidth());
-						((MainActivity) getActivity()).savePicture("display.jpg", displayedBitmap, 90);
-						((MainActivity) getActivity()).savePicture("process.jpg", processedBitmap, 90);
+						Matrix matrix = new Matrix();
+						matrix.preRotate(90);
+						Bitmap bitmap = BitmapFactory.decodeByteArray(arg0, 0, arg0.length);
+						bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+						((MainActivity) getActivity()).startRecognitionActivity(bitmap);
 					}
 				});
 			}

@@ -17,8 +17,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.widget.Toast;
 
-public class MainActivity extends FragmentActivity implements
-		ActionBar.TabListener {
+public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
 
 	/**
 	 * The serialization (saved instance state) Bundle key representing the
@@ -33,13 +32,11 @@ public class MainActivity extends FragmentActivity implements
 
 		// Set up the action bar to show a dropdown list.
 		final ActionBar actionBar = getActionBar();
-		// actionBar.setDisplayShowHomeEnabled(false);
-		// actionBar.setDisplayShowTitleEnabled(false);
+		actionBar.setDisplayShowHomeEnabled(false);
+		actionBar.setDisplayShowTitleEnabled(false);
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-		actionBar.addTab(actionBar.newTab().setText(R.string.title_section1)
-				.setTabListener(this));
-		actionBar.addTab(actionBar.newTab().setText(R.string.title_section2)
-				.setTabListener(this));
+		actionBar.addTab(actionBar.newTab().setText(R.string.title_section1).setTabListener(this));
+		actionBar.addTab(actionBar.newTab().setText(R.string.title_section2).setTabListener(this));
 
 		Intent intent = new Intent(this, ReadDataService.class);
 		startService(intent);
@@ -49,16 +46,14 @@ public class MainActivity extends FragmentActivity implements
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 		// Restore the previously serialized current dropdown position.
 		if (savedInstanceState.containsKey(STATE_SELECTED_NAVIGATION_ITEM)) {
-			getActionBar().setSelectedNavigationItem(
-					savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
+			getActionBar().setSelectedNavigationItem(savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
 		}
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		// Serialize the current dropdown position.
-		outState.putInt(STATE_SELECTED_NAVIGATION_ITEM, getActionBar()
-				.getSelectedNavigationIndex());
+		outState.putInt(STATE_SELECTED_NAVIGATION_ITEM, getActionBar().getSelectedNavigationIndex());
 	}
 
 	@Override
@@ -75,15 +70,13 @@ public class MainActivity extends FragmentActivity implements
 			Matrix matrix = new Matrix();
 			matrix.preRotate(rotateDegree);
 			FileOutputStream stream = new FileOutputStream(file);
-			bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
-					bitmap.getHeight());
+			bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight());
 			bitmap.compress(Bitmap.CompressFormat.PNG, 20, stream);
 			stream.flush();
 			stream.close();
 
 			Uri contentUri = Uri.fromFile(file);
-			Intent mediaScanIntent = new Intent(
-					Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+			Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
 			mediaScanIntent.setData(contentUri);
 			sendBroadcast(mediaScanIntent);
 		} catch (Exception e) {
@@ -100,8 +93,7 @@ public class MainActivity extends FragmentActivity implements
 			intent.putExtra("street_bitmap", byteArray);
 			startActivity(intent);
 		} else {
-			Toast.makeText(this, "Please try later...", Toast.LENGTH_LONG)
-					.show();
+			Toast.makeText(this, "Please try later...", Toast.LENGTH_LONG).show();
 		}
 	}
 
@@ -113,12 +105,10 @@ public class MainActivity extends FragmentActivity implements
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
 		switch (tab.getPosition()) {
 		case 0:
-			getSupportFragmentManager().beginTransaction()
-					.replace(R.id.container, new StreetViewFragment()).commit();
+			getSupportFragmentManager().beginTransaction().replace(R.id.container, new StreetViewFragment()).commit();
 			break;
 		case 1:
-			getSupportFragmentManager().beginTransaction()
-					.replace(R.id.container, new CameraFragment()).commit();
+			getSupportFragmentManager().beginTransaction().replace(R.id.container, new CameraFragment()).commit();
 			break;
 
 		default:

@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import android.R.integer;
 import android.util.Log;
 
 public class MOSROReturn {
@@ -54,9 +55,9 @@ public class MOSROReturn {
 				label++;
 			}
 		}
-//		Log.v("MOSRO", "Connected Component map:\n");
-//		Log.v("MOSRO", LogString(cc));
-//		Log.v("MOSRO", "Label#"+String.valueOf(max_label)+ " : "+String.valueOf(max_count));
+		Log.v("MOSRO", "Connected Component map:\n");
+		Log.v("MOSRO", LogString(cc));
+		Log.v("MOSRO", "Label#"+String.valueOf(max_label)+ " : "+String.valueOf(max_count));
 		boolean[] Maskcc = new boolean[len];
 		for(int i=0;i<len;i++){
 			if(cc[i]==max_label){
@@ -65,7 +66,18 @@ public class MOSROReturn {
 				Maskcc[i] = false;
 			}
 		}
-		Log.v("MOSRO", LogString(Maskcc));
+//		Log.v("MOSRO", LogString(Maskcc));
+		for (int k = 0; k < 3; k++) {
+			len = y[k].length;
+			for(int i=0;i<len;i++){
+				if(y[k][i]==true){
+					cc[i] = 0;
+				}else{
+					cc[i] = -1;
+				}
+			}
+			Log.v("MOSRO " + String.valueOf(k) + ":", LogString(cc));
+		}
 		return Maskcc;
 	}
 	

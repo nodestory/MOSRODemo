@@ -38,8 +38,7 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-public class StreetView extends RelativeLayout implements OnClickListener,
-		OnSeekBarChangeListener {
+public class StreetView extends RelativeLayout implements OnClickListener, OnSeekBarChangeListener {
 	private double lat = 25.017757999999994;
 	private double lng = 121.47777728399998;
 	private int heading = 20;
@@ -51,7 +50,7 @@ public class StreetView extends RelativeLayout implements OnClickListener,
 	private TextView addressTextView;
 	private VerticalSeekBar zoomBar;
 	private ImageButton forwardButton;
-	private ImageButton backButton;
+	// private ImageButton backButton;
 	private ImageView streetImageView;
 
 	private GestureDetector gestureDetector;
@@ -76,20 +75,15 @@ public class StreetView extends RelativeLayout implements OnClickListener,
 
 	public StreetView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		LayoutInflater inflater = (LayoutInflater) context
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View rootView = inflater.inflate(R.layout.layout_street_view, this,
-				true);
-		addressTextView = (TextView) rootView
-				.findViewById(R.id.textView_address);
-		streetImageView = (ImageView) rootView
-				.findViewById(R.id.imageView_street);
-		forwardButton = (ImageButton) rootView
-				.findViewById(R.id.imageButton_move_forward);
+		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View rootView = inflater.inflate(R.layout.layout_street_view, this, true);
+		addressTextView = (TextView) rootView.findViewById(R.id.textView_address);
+		streetImageView = (ImageView) rootView.findViewById(R.id.imageView_street);
+		forwardButton = (ImageButton) rootView.findViewById(R.id.imageButton_move_forward);
 		forwardButton.setOnClickListener(this);
-		backButton = (ImageButton) rootView
-				.findViewById(R.id.imageButton_move_back);
-		backButton.setOnClickListener(this);
+		// backButton = (ImageButton)
+		// rootView.findViewById(R.id.imageButton_move_back);
+		// backButton.setOnClickListener(this);
 		zoomBar = (VerticalSeekBar) rootView.findViewById(R.id.seekBar);
 		zoomBar.setEnabled(true);
 		zoomBar.setOnSeekBarChangeListener(this);
@@ -112,8 +106,7 @@ public class StreetView extends RelativeLayout implements OnClickListener,
 		return true;
 	}
 
-	private class GestureListener extends
-			GestureDetector.SimpleOnGestureListener {
+	private class GestureListener extends GestureDetector.SimpleOnGestureListener {
 		private static final int SWIPE_THRESHOLD = 100;
 		private static final int SWIPE_VELOCITY_THRESHOLD = 100;
 
@@ -130,15 +123,13 @@ public class StreetView extends RelativeLayout implements OnClickListener,
 		}
 
 		@Override
-		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-				float velocityY) {
+		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 			boolean result = false;
 			try {
 				float diffY = e2.getY() - e1.getY();
 				float diffX = e2.getX() - e1.getX();
 				if (Math.abs(diffX) > Math.abs(diffY)) {
-					if (Math.abs(diffX) > SWIPE_THRESHOLD
-							&& Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+					if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
 						if (diffX > 0) {
 							heading -= 10;
 							heading = heading % 360;
@@ -192,9 +183,9 @@ public class StreetView extends RelativeLayout implements OnClickListener,
 
 	private class GetAddressTask extends AsyncTask<String, Void, String> {
 		protected String doInBackground(String... params) {
-			String url = String
-					.format("http://maps.googleapis.com/maps/api/geocode/json?latlng=%1$s,%2$s&sensor=false&language=zh-TW",
-							lat, lng);
+			String url = String.format(
+					"http://maps.googleapis.com/maps/api/geocode/json?latlng=%1$s,%2$s&sensor=false&language=zh-TW",
+					lat, lng);
 			Log.d("Google Geocodind API", url);
 			try {
 				HttpRequestBase request = new HttpGet();
@@ -203,9 +194,7 @@ public class StreetView extends RelativeLayout implements OnClickListener,
 				HttpResponse response = client.execute(request);
 
 				HttpEntity responseEntity = response.getEntity();
-				JSONArray results = (new JSONObject(
-						EntityUtils.toString(responseEntity)))
-						.getJSONArray("results");
+				JSONArray results = (new JSONObject(EntityUtils.toString(responseEntity))).getJSONArray("results");
 				JSONObject result = (JSONObject) results.get(0);
 				String address = result.getString("formatted_address");
 				return address;
@@ -240,18 +229,17 @@ public class StreetView extends RelativeLayout implements OnClickListener,
 			lng = 1.598 * lat + 81.4994;
 			new DownloadStreetView(true).execute();
 			break;
-		case R.id.imageButton_move_back:
-			lat -= 0.00003;
-			lng = 1.598 * lat + 81.4994;
-			new DownloadStreetView(true).execute();
-			break;
+		// case R.id.imageButton_move_back:
+		// lat -= 0.00003;
+		// lng = 1.598 * lat + 81.4994;
+		// new DownloadStreetView(true).execute();
+		// break;
 		}
 	}
 
 	// Implement OnSeekBarChangeListener
 	@Override
-	public void onProgressChanged(SeekBar seekBar, int progress,
-			boolean fromUser) {
+	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 	}
 
 	@Override
