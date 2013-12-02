@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/MOSRODemo.iml" filepath="$PROJECT_DIR$/MOSRODemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../OpenCV-2.3.1/OpenCV-2.3.1.iml" filepath="$PROJECT_DIR$/../OpenCV-2.3.1/OpenCV-2.3.1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../google_play_services/libproject/google-play-services_lib/google-play-services_lib.iml" filepath="$PROJECT_DIR$/../google_play_services/libproject/google-play-services_lib/google-play-services_lib.iml" />
+      <module fileurl="file://$APPLICATION_HOME_DIR$/sdk/extras/google/google_play_services/libproject/google-play-services_lib/google-play-services_lib1.iml" filepath="$APPLICATION_HOME_DIR$/sdk/extras/google/google_play_services/libproject/google-play-services_lib/google-play-services_lib1.iml" />
+    </modules>
+  </component>
+</project>
+

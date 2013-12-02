@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/textView_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#66424242"
+        android:drawableLeft="@drawable/ic_position"
+        android:gravity="center_vertical"
+        android:paddingBottom="8dip"
+        android:paddingLeft="8dip"
+        android:paddingTop="8dip"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#ffffff" />
+
+    <ImageView
+        android:id="@+id/imageView_static_streetview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#ff000000"
+        android:src="@drawable/tt" />
+
+    <ImageButton
+        android:id="@+id/imageButton_take"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_camara" />
+
+</RelativeLayout>
