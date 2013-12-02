@@ -225,9 +225,9 @@ containing a value of this type.
         public static final int imageButton_take=0x7f060009;
         public static final int imageView1=0x7f060014;
         public static final int imageView_logos=0x7f060007;
-        public static final int imageView_static_streetview=0x7f06000a;
+        public static final int imageView_static_streetview=0x7f06000b;
         public static final int imageView_street=0x7f060006;
-        public static final int imageView_street_view=0x7f06000b;
+        public static final int imageView_street_view=0x7f06000c;
         public static final int imageView_zoom_in=0x7f06000f;
         public static final int imageView_zoom_out=0x7f060011;
         public static final int layout_zoom=0x7f06000e;
@@ -240,10 +240,10 @@ containing a value of this type.
         public static final int terrain=0x7f060003;
         public static final int textView1=0x7f060013;
         public static final int textView_addr=0x7f060016;
-        public static final int textView_address=0x7f06000d;
+        public static final int textView_address=0x7f06000a;
         public static final int textView_intro=0x7f060017;
         public static final int textView_name=0x7f060015;
-        public static final int webView=0x7f06000c;
+        public static final int webView=0x7f06000d;
     }
     public static final class integer {
         public static final int google_play_services_version=0x7f080000;

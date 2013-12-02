@@ -7,19 +7,21 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#98AFC7"
         android:gravity="bottom" >
 
         <ImageView
             android:id="@+id/imageView_street"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:background="#ff000000" />
         <!-- android:scaleType="centerCrop" -->
 
         <ImageView
             android:id="@+id/imageView_logos"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true" />
+
         <!-- android:scaleType="centerCrop" -->
 
     </RelativeLayout>

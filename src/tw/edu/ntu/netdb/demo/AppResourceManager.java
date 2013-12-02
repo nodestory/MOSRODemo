@@ -10,118 +10,138 @@ import java.util.List;
 import org.opencv.samples.tutorial4.MOSROCategory;
 
 import android.app.Application;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.util.Log;
 
 public class AppResourceManager extends Application {
-	private boolean hasData = false;
+	private static final String PREF_NAME = "MOSRODEMO";
 
+	private static final String[] CATEGORY_NAMES = { "7-Eleven", "FamilyMart", "Hi-Life" };
+	private static final int[] CATEGORY_LOGOS = { R.drawable.c5, R.drawable.c6, R.drawable.c7 };
+	private static final int[] CATEGORY_KERNELS = { R.raw.kernel_5, R.raw.kernel_6, R.raw.kernel_7 };
+	private static final int[] CATEGORY_VOCS = { R.raw.voc_5, R.raw.voc_6, R.raw.voc_7 };
+
+	private boolean isLoading = true;
 	private List<MOSROCategory> categories = new ArrayList<MOSROCategory>();
 
-	public boolean hasData() {
-		return hasData;
+	public boolean isLoading() {
+		return isLoading;
 	}
 
 	public void setCategories() {
-		hasData = false;
-		categories.add(new MOSROCategory(5, "7-Eleven", R.drawable.c5));
-		categories.add(new MOSROCategory(6, "FamilyMart", R.drawable.c6));
-		categories.add(new MOSROCategory(7, "Hi-Life", R.drawable.c7));
-		// categories.add(new MOSROCategory(8, "OK", R.drawable.c8));
-		// category.add(new MOSROCategory(24, "Aurora"));
-		// category.add(new MOSROCategory(38, "ChangHua"));
-		// category.add(new MOSROCategory(62, "YungChing"));
-		List<Integer> RawKernel = new ArrayList<Integer>();
-		RawKernel.add(R.raw.kernel_5);
-		RawKernel.add(R.raw.kernel_6);
-		RawKernel.add(R.raw.kernel_7);
-		// RawKernel.add(R.raw.kernel_8);
-		// RawKernel.add(R.raw.kernel_24);
-		// RawKernel.add(R.raw.kernel_38);
-		// RawKernel.add(R.raw.kernel_62);
-		List<Integer> RawVoc = new ArrayList<Integer>();
-		RawVoc.add(R.raw.voc_5);
-		RawVoc.add(R.raw.voc_6);
-		RawVoc.add(R.raw.voc_7);
-		// RawVoc.add(R.raw.voc_8);
-		// RawVoc.add(R.raw.voc_24);
-		// RawVoc.add(R.raw.voc_38);
-		// RawVoc.add(R.raw.voc_62);
-		for (int c = 0; c < categories.size(); c++) {
-			int[] size = new int[2];
-			double[] w = new double[0];
-			// TODO
-			// List<double[]> voc = new ArrayList<double[]>();
-			List<Node> voc = new ArrayList<Node>();
-			try {
-				// Read Kernel map
-				InputStream fin = getResources().openRawResource(RawKernel.get(c));
-				BufferedReader br = new BufferedReader(new InputStreamReader(fin));
-				String s = "";
-				String[] q;
-				s = br.readLine();
-				q = s.split(" ");
-				size[0] = Integer.parseInt(q[0]);
-				size[1] = Integer.parseInt(q[1]);
-				s = br.readLine();
-				q = s.split(" ");
-				w = new double[q.length];
-				for (int i = 0; i < q.length; i++) {
-					w[i] = Double.parseDouble(q[i]);
-				}
-				Log.v(getClass().getName(), "Read Kernel#" + String.valueOf(categories.get(c).CID) + " sucessfully");
-				// Read Vocabulary
-				fin = getResources().openRawResource(RawVoc.get(c));
-				br = new BufferedReader(new InputStreamReader(fin));
-				s = br.readLine();
-				int k = Integer.parseInt(s);
-				Log.d(getClass().getName(), String.valueOf(k));
+		for (int i = 0; i < CATEGORY_NAMES.length; i++) {
+			categories.add(new MOSROCategory(i + 5, CATEGORY_NAMES[i], CATEGORY_LOGOS[i]));
 
-				// TODO
-				while ((s = br.readLine()) != null) {
-					q = s.split(" ");
-					double[] v = new double[q.length];
-					for (int i = 0; i < q.length; i++) {
-						v[i] = Double.parseDouble(q[i]);
+		}
+
+		SharedPreferences prefs = getSharedPreferences(PREF_NAME, 0);
+		for (int i = 0; i < CATEGORY_NAMES.length; i++) {
+			// read kernel
+			if (!prefs.contains(CATEGORY_NAMES[i] + ".kernel")) {
+				Log.i(getClass().getName(), "start reading kernel for the first time - "
+						+ CATEGORY_NAMES[i]);
+				Editor prefEditor = prefs.edit();
+				InputStream inStream = getResources().openRawResource(CATEGORY_KERNELS[i]);
+				BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));
+				String line = "";
+				String fileString = "";
+				try {
+					while ((line = reader.readLine()) != null) {
+						fileString += line + "\n";
 					}
-					Node node = new Node(v);
-					for (int i = 0; i < k; i++) {
-						s = br.readLine();
-						q = s.split(" ");
-						double[] vv = new double[q.length];
-						for (int ii = 0; ii < q.length; ii++) {
-							vv[ii] = Double.parseDouble(q[ii]);
-						}
-						node.addChild(new Node(vv));
-					}
-					voc.add(node);
-					// q = s.split(" ");
-					// double[] v = new double[q.length];
-					// for (int i = 0; i < q.length; i++) {
-					// v[i] = Double.parseDouble(q[i]);
-					// }
-					// voc.add(v);
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-				Log.v(getClass().getName(), "Read vocabulary#" + String.valueOf(categories.get(c).CID) + " sucessfully");
-			} catch (IOException e) {
-				e.printStackTrace();
+				prefEditor.putString(CATEGORY_NAMES[i] + ".kernel", fileString);
+				prefEditor.commit();
+				Log.i(getClass().getName(), "finish reading kernel for the first time - "
+						+ CATEGORY_NAMES[i]);
 			}
-			categories.get(c).w = w;
-			categories.get(c).voc = voc;
+
+			// read voc
+			if (!prefs.contains(CATEGORY_NAMES[i] + ".voc")) {
+				Log.i(getClass().getName(), "start reading voc for the first time - "
+						+ CATEGORY_NAMES[i]);
+				Editor prefEditor = prefs.edit();
+				InputStream inStream = getResources().openRawResource(CATEGORY_VOCS[i]);
+				BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));
+				String line = "";
+				String fileString = "";
+				try {
+					while ((line = reader.readLine()) != null) {
+
+						fileString += line + "\n";
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				prefEditor.putString(CATEGORY_NAMES[i] + ".voc", fileString);
+				prefEditor.commit();
+				Log.i(getClass().getName(), "finish reading voc for the first time - "
+						+ CATEGORY_NAMES[i]);
+			}
 		}
 
-		Log.d(getClass().getName(), LogString(categories.get(0).w));
-		Log.d(getClass().getName(), LogString(categories.get(0).voc.get(5).getV()));
-		Log.d(getClass().getName(), LogString(categories.get(0).voc.get(5).getChild(18).getV()));
-		Log.d(getClass().getName(), LogString(categories.get(0).voc.get(5).getChild(3).getV()));
-		hasData = true;
-	}
+		for (int i = 0; i < CATEGORY_NAMES.length; i++) {
+			// read kernel
+			Log.i(getClass().getName(), "start reading kernel - " + CATEGORY_NAMES[i]);
+			String fileString = prefs.getString(CATEGORY_NAMES[i] + ".kernel", "");
+			String[] lines = fileString.split("\n");
 
-	private String LogString(double[] array) {
-		String s = String.valueOf(array[0]);
-		for (int i = 1; i < array.length; i++) {
-			s += " " + array[i];
+			int[] size = new int[2];
+			int index = 0;
+			for (String str : lines[0].split(" ")) {
+				size[index] = Integer.parseInt(str);
+				index++;
+			}
+
+			String[] values = lines[1].split(" ");
+			double[] w = new double[values.length];
+			index = 0;
+			for (int j = 0; j < values.length; j++) {
+				w[index] = Double.parseDouble(values[j]);
+				index++;
+			}
+			Log.i(getClass().getName(), "finish reading kernel - " + CATEGORY_NAMES[i]);
+
+			// read voc
+			Log.i(getClass().getName(), "start reading voc - " + CATEGORY_NAMES[i]);
+			List<Node> voc = new ArrayList<Node>();
+			fileString = prefs.getString(CATEGORY_NAMES[i] + ".voc", "");
+			lines = fileString.split("\n");
+
+			int k = Integer.parseInt(lines[0]);
+			int lineNum = 0;
+			while (lineNum < lines.length - 1) {
+				lineNum++;
+				String[] q = lines[lineNum].split(" ");
+				double[] v = new double[q.length];
+				for (int j = 0; j < q.length; j++) {
+					v[j] = Double.parseDouble(q[j]);
+				}
+
+				Node node = new Node(v);
+				for (int j = 0; j < k; j++) {
+					lineNum++;
+					if (lineNum == lines.length) {
+						break;
+					}
+					q = lines[lineNum].split(" ");
+					double[] vv = new double[q.length];
+					for (int ii = 0; ii < q.length; ii++) {
+						vv[ii] = Double.parseDouble(q[ii]);
+					}
+					node.addChild(new Node(vv));
+				}
+				voc.add(node);
+			}
+			Log.i(getClass().getName(), "finish reading voc - " + CATEGORY_NAMES[i]);
+
+			categories.get(i).w = w;
+			categories.get(i).voc = voc;
 		}
-		return s;
+		isLoading = false;
 	}
 
 	public List<MOSROCategory> getCategories() {

@@ -34,7 +34,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	private int mMode;
 
 	private MapFragment mMapFragment;
-	private StreetViewFragment mStreetViewFragment;
 	private CameraFragment mCameraFragment;
 
 	@Override
@@ -44,7 +43,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 		mMapFragment = new MapFragment();
 		mMapFragment.setOnPositionClickedListener(this);
-		mStreetViewFragment = new StreetViewFragment();
 		mCameraFragment = new CameraFragment();
 		mMode = MODE_MAP;
 
@@ -110,7 +108,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	}
 
 	public void startRecognitionActivity(Bitmap streetBitmap) {
-		if (((AppResourceManager) getApplicationContext()).hasData()) {
+		if (!((AppResourceManager) getApplicationContext()).isLoading()) {
 			Intent intent = new Intent(this, RecognitionActivity.class);
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			streetBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
@@ -123,7 +121,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	}
 
 	public void startRecognitionActivity(Bundle args) {
-		if (((AppResourceManager) getApplicationContext()).hasData()) {
+		if (!((AppResourceManager) getApplicationContext()).isLoading()) {
 			Intent intent = new Intent(this, RecognitionActivity.class);
 			intent.putExtras(args);
 			startActivity(intent);

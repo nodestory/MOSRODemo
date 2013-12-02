@@ -21,9 +21,8 @@ public class RecognitionActivity extends Activity {
 	private Context mContext;
 	private ImageView mStreetImageView;
 	private ImageView mLogoImageView;
-	private Bitmap mDisplayedBitmap;
 	private Bitmap mProcessedBitmap;
-	
+
 	private static final int SCALE = 3;
 	private static int sOriginalWidth;
 	private static int sOriginalHeight;
@@ -35,45 +34,37 @@ public class RecognitionActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_recognition);
 		setProgressBarIndeterminateVisibility(true);
-		
+
 		Bundle args = getIntent().getExtras();
-		int imgResId = args.getInt("img_res_id");
-		mStreetImageView = (ImageView) findViewById(R.id.imageView_street);
-		mStreetImageView.setImageResource(imgResId);
-		mProcessedBitmap =  BitmapFactory.decodeResource(getResources(), imgResId);
-		sOriginalWidth = mProcessedBitmap.getWidth();
-		sOriginalHeight = mProcessedBitmap.getHeight();
-		Log.d(getClass().getName(), String.valueOf(sOriginalWidth));
-		Log.d(getClass().getName(), String.valueOf(sOriginalHeight));
-		mProcessedBitmap = Bitmap.createScaledBitmap(mProcessedBitmap,
-				sOriginalWidth/SCALE,
-				sOriginalHeight/SCALE, false);
-		mLogoImageView = (ImageView) findViewById(R.id.imageView_logos);
+		if (!args.containsKey("street_bitmap")) {
+			int imgResId = args.getInt("img_res_id");
+			mStreetImageView = (ImageView) findViewById(R.id.imageView_street);
+			mStreetImageView.setImageResource(imgResId);
+			mProcessedBitmap = BitmapFactory.decodeResource(getResources(), imgResId);
+			// pseudo image for testing
+			// BitmapFactory.decodeResource(getResources(), R.drawable.tt5);
+			sOriginalWidth = mProcessedBitmap.getWidth();
+			sOriginalHeight = mProcessedBitmap.getHeight();
+			Log.d(getClass().getName(), String.valueOf(sOriginalWidth));
+			Log.d(getClass().getName(), String.valueOf(sOriginalHeight));
+			// resize the bitmap
+			mProcessedBitmap = Bitmap.createScaledBitmap(mProcessedBitmap, sOriginalWidth / SCALE,
+					sOriginalHeight / SCALE, false);
+			mLogoImageView = (ImageView) findViewById(R.id.imageView_logos);
+		} else {
+			byte[] byteArray = getIntent().getByteArrayExtra("street_bitmap");
+			Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+			// get the center part of the bitmap
+			if (bitmap.getHeight() > bitmap.getWidth()) {
+				mProcessedBitmap = Bitmap.createBitmap(bitmap, 0,
+						bitmap.getHeight() / 2 - bitmap.getWidth() / 2, bitmap.getWidth(),
+						bitmap.getWidth());
+			}
+			mStreetImageView = (ImageView) findViewById(R.id.imageView_street);
+			mLogoImageView = (ImageView) findViewById(R.id.imageView_logos);
+		}
+
 		new IdentifyTask().execute();
-
-//		byte[] byteArray = getIntent().getByteArrayExtra("street_bitmap");
-//		Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-//		mDisplayedBitmap = bitmap;
-//		// get the center part of the bitmap
-//		if (bitmap.getHeight() > bitmap.getWidth()) {
-//			mProcessedBitmap = Bitmap.createBitmap(bitmap, 0, bitmap.getHeight() / 2 - bitmap.getWidth() / 2,
-//					bitmap.getWidth(), bitmap.getWidth());
-//		}
-
-		// resize the bitmap
-		// mProcessedBitmap = Bitmap.createScaledBitmap(mProcessedBitmap,
-		// mProcessedBitmap.getWidth() / 2,
-		// mProcessedBitmap.getHeight() / 2, false);
-		// test a default bitmap
-		// mProcessedBitmap = BitmapFactory.decodeResource(getResources(),
-		// R.drawable.tt5);
-		
-//		mStreetImageView = (ImageView) findViewById(R.id.imageView_street);
-//		mStreetImageView.setImageBitmap(mDisplayedBitmap);
-//		mLogoImageView = (ImageView) findViewById(R.id.imageView_logos);
-//		new IdentifyTask().execute();
-
-//		setProgressBarIndeterminate(true);
 	}
 
 	private void displayLogo(int centerX, int centerY, int category) {
@@ -95,16 +86,14 @@ public class RecognitionActivity extends Activity {
 		// paint.setColor(Color.YELLOW);
 		// paint.setStrokeWidth(2);
 		// paint.setStyle(Paint.Style.STROKE);
-//		canvas.drawBitmap(logoBitmap, centerX - logoBitmap.getWidth() / 2, (centerY - logoBitmap.getHeight() / 2)
-//				+ (mDisplayedBitmap.getHeight() / 2 - mDisplayedBitmap.getWidth() / 2), paint);
-		canvas.drawBitmap(logoBitmap, centerX - logoBitmap.getWidth() / 2, (centerY - logoBitmap.getHeight() / 2)
-				+ (sOriginalHeight - sOriginalWidth), paint);
+		canvas.drawBitmap(logoBitmap, centerX - logoBitmap.getWidth() / 2,
+				(centerY - logoBitmap.getHeight() / 2) + (sOriginalHeight - sOriginalWidth), paint);
 
 		mLogoImageView.setImageBitmap(bgBitmap);
 
 		// set the animation
-		final Animation scaleAnimation = new ScaleAnimation(2f, 1f, 2f, 1f, Animation.RELATIVE_TO_SELF, 0.5f,
-				Animation.RELATIVE_TO_SELF, 0.5f);
+		final Animation scaleAnimation = new ScaleAnimation(2f, 1f, 2f, 1f,
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
 		scaleAnimation.setDuration(1000);
 		mLogoImageView.setAnimation(scaleAnimation);
 		mLogoImageView.setOnClickListener(new OnClickListener() {
@@ -122,18 +111,11 @@ public class RecognitionActivity extends Activity {
 		}
 
 		protected void onPostExecute(Result result) {
-			// DEBUG
-			// display the identified region
-			// Bitmap bitmap = result.getMaskBitmap();
-			// mStreetImageView.setImageBitmap(bitmap);
 			setProgressBarIndeterminateVisibility(false);
-			// displayLogo(result.getCenterX() * 2, result.getCenterY() * 2,
-			// result.getCategory().CLOGO);
-			// TODO
+			// display the identified region for testing
 			mStreetImageView.setImageBitmap(result.getMaskBitmap());
-			displayLogo(result.getCenterX()*SCALE, result.getCenterY()*SCALE, result.getCategory().CLOGO);
-			Log.d(getClass().getName(), String.valueOf(result.getCategory().CLOGO));
-			Log.d(getClass().getName(), String.valueOf(result.getCenterX()) + String.valueOf(result.getCenterY()));
+			displayLogo(result.getCenterX() * SCALE, result.getCenterY() * SCALE,
+					result.getCategory().CLOGO);
 		}
 	}
 }
