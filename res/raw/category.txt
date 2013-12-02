@@ -1,0 +1,31 @@
+1 Aso Shoes
+3 Elifemall 
+4 Hsin Tung Yang 
+5 7-Eleven
+6 FamilyMart
+7 Hi-Life
+11 Dante Coffee
+13 Orange House
+15 Cosmed
+22 Taiwan Mobile
+23 Vibo
+24 Aurora 
+25 Arcoa 
+26 Working House
+30 McDonald's
+32 KFC
+34 Subway
+36 Cathay United Bank
+37 Taiwan Cooperative Bank
+38 Chang Hwa Bank
+39 Chinatrust
+41 EnTie Bank
+44 Fubon Bank
+45 Hua Nan Bank
+48 Bank SinoPac
+49 Taishin Bank
+53 Chuanghua Post
+57 Century 21
+58 Chinatrust Real Estate
+60 Sinyi Reality
+62 Yungching

@@ -32,7 +32,6 @@ public class AppResourceManager extends Application {
 	public void setCategories() {
 		for (int i = 0; i < CATEGORY_NAMES.length; i++) {
 			categories.add(new MOSROCategory(i + 5, CATEGORY_NAMES[i], CATEGORY_LOGOS[i]));
-
 		}
 
 		SharedPreferences prefs = getSharedPreferences(PREF_NAME, 0);
