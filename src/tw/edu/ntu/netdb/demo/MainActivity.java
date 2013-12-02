@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 
+import tw.edu.ntu.netdb.demo.MapFragment.OnPositionClickedListener;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
@@ -17,20 +18,36 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.widget.Toast;
 
-public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
+import com.google.android.gms.maps.model.LatLng;
+
+public class MainActivity extends FragmentActivity implements ActionBar.TabListener,
+		OnPositionClickedListener {
 
 	/**
 	 * The serialization (saved instance state) Bundle key representing the
 	 * current dropdown position.
 	 */
 	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
+	private static final int MODE_MAP = 0;
+	private static final int MODE_STREETVIEW = 1;
+
+	private int mMode;
+
+	private MapFragment mMapFragment;
+	private StreetViewFragment mStreetViewFragment;
+	private CameraFragment mCameraFragment;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		// Set up the action bar to show a dropdown list.
+		mMapFragment = new MapFragment();
+		mMapFragment.setOnPositionClickedListener(this);
+		mStreetViewFragment = new StreetViewFragment();
+		mCameraFragment = new CameraFragment();
+		mMode = MODE_MAP;
+
 		final ActionBar actionBar = getActionBar();
 		actionBar.setDisplayShowHomeEnabled(false);
 		actionBar.setDisplayShowTitleEnabled(false);
@@ -43,10 +60,18 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+		getSupportFragmentManager().beginTransaction().replace(R.id.container, mMapFragment)
+				.commit();
+	}
+
+	@Override
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 		// Restore the previously serialized current dropdown position.
 		if (savedInstanceState.containsKey(STATE_SELECTED_NAVIGATION_ITEM)) {
-			getActionBar().setSelectedNavigationItem(savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
+			getActionBar().setSelectedNavigationItem(
+					savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
 		}
 	}
 
@@ -97,6 +122,16 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		}
 	}
 
+	public void startRecognitionActivity(Bundle args) {
+		if (((AppResourceManager) getApplicationContext()).hasData()) {
+			Intent intent = new Intent(this, RecognitionActivity.class);
+			intent.putExtras(args);
+			startActivity(intent);
+		} else {
+			Toast.makeText(this, "Please try later...", Toast.LENGTH_LONG).show();
+		}
+	}
+
 	@Override
 	public void onTabReselected(Tab tab, FragmentTransaction ft) {
 	}
@@ -105,10 +140,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
 		switch (tab.getPosition()) {
 		case 0:
-			getSupportFragmentManager().beginTransaction().replace(R.id.container, new StreetViewFragment()).commit();
+			getSupportFragmentManager().beginTransaction().replace(R.id.container, mMapFragment)
+					.commit();
 			break;
 		case 1:
-			getSupportFragmentManager().beginTransaction().replace(R.id.container, new CameraFragment()).commit();
+			getSupportFragmentManager().beginTransaction().replace(R.id.container, mCameraFragment)
+					.commit();
 			break;
 
 		default:
@@ -118,5 +155,28 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 	@Override
 	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+	}
+
+	@Override
+	public void OnPositionClicked(LatLng lntlng) {
+		Bundle bundle = new Bundle();
+		bundle.putDouble("lat", lntlng.latitude);
+		bundle.putDouble("lng", lntlng.longitude);
+		bundle.putInt("img_res_id", R.drawable.tt5);
+		StaticStreetViewFragment fragment = new StaticStreetViewFragment();
+		fragment.setArguments(bundle);
+		mMode = MODE_STREETVIEW;
+		getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment)
+				.addToBackStack(null).commit();
+	}
+
+	@Override
+	public void onBackPressed() {
+		if (mMode == MODE_STREETVIEW) {
+			getSupportFragmentManager().popBackStack();
+			mMode = MODE_MAP;
+		} else {
+			super.onBackPressed();
+		}
 	}
 }
