@@ -60,7 +60,7 @@ public class MapFragment extends SupportMapFragment implements OnMarkerClickList
 				int imgResId = getResources().getIdentifier(
 						fileName.replace(".jpg", "").toLowerCase(Locale.ENGLISH), "drawable",
 						"tw.edu.ntu.netdb.demo");
-				if (imgResId != 0 && categoryIndex == 5) {
+				if (imgResId != 0 && categoryIndex == 15) {
 					DemoPosition position = new DemoPosition(categoryIndex, imgResId,
 							Double.parseDouble(elements[1]), Double.parseDouble(elements[2]),
 							Integer.parseInt(elements[3]), Integer.parseInt(elements[4]),

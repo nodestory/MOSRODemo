@@ -5,6 +5,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -38,12 +39,16 @@ public class StaticStreetViewFragment extends Fragment {
 	@Override
 	public void onStop() {
 		super.onStop();
-		Drawable drawable = mStaitcStreetView.getDrawable();
-		if (drawable instanceof BitmapDrawable) {
-			BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
-			Bitmap bitmap = bitmapDrawable.getBitmap();
-			bitmap.recycle();
-			System.gc();
+		try {
+			Drawable drawable = mStaitcStreetView.getDrawable();
+			if (drawable instanceof BitmapDrawable) {
+				BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+				Bitmap bitmap = bitmapDrawable.getBitmap();
+				bitmap.recycle();
+				System.gc();
+			}
+		} catch (Exception e) {
+			Log.e(getClass().getName(), e.getMessage());
 		}
 	}
 }

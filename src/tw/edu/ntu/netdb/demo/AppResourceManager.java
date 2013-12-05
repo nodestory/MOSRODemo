@@ -13,8 +13,7 @@ import android.app.Application;
 import android.util.Log;
 
 public class AppResourceManager extends Application {
-	private static final int[] INDEXES = { 5 };
-//	, 15, 23, 24, 25, 36, 38, 44, 45, 58, 60, 62
+	private static final int[] INDEXES = { 5, 15, 23, 24, 25, 36, 38, 44, 45, 58, 60, 62 };
 	private int[] logos = new int[INDEXES.length];
 	private int[] kernels = new int[INDEXES.length];
 	private int[] vocs = new int[INDEXES.length];

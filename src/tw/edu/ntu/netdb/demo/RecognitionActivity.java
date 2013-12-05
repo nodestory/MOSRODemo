@@ -49,8 +49,7 @@ public class RecognitionActivity extends Activity {
 			// BitmapFactory.decodeResource(getResources(), R.drawable.tt5);
 			sOriginalWidth = mProcessedBitmap.getWidth();
 			sOriginalHeight = mProcessedBitmap.getHeight();
-			Log.d(getClass().getName(), String.valueOf(sOriginalWidth));
-			Log.d(getClass().getName(), String.valueOf(sOriginalHeight));
+			
 			// resize the bitmap
 			mProcessedBitmap = Bitmap.createScaledBitmap(mProcessedBitmap, sOriginalWidth / SCALE,
 					sOriginalHeight / SCALE, false);
@@ -82,9 +81,13 @@ public class RecognitionActivity extends Activity {
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inSampleSize = 10;
 		Bitmap logoBitmap = BitmapFactory.decodeResource(getResources(), category, options);
-		int scale = 200 / Math.max(logoBitmap.getWidth(), logoBitmap.getHeight());
-		logoBitmap = Bitmap.createScaledBitmap(logoBitmap, logoBitmap.getWidth() * scale,
-				logoBitmap.getHeight() * scale, false);
+		
+		
+		double average = (logoBitmap.getWidth() + logoBitmap.getHeight()) / 2.0;
+		double threshold = 150.0;
+		double ratio = average / threshold;
+		logoBitmap = Bitmap.createScaledBitmap(logoBitmap, (int) (logoBitmap.getWidth() / ratio),
+				(int) (logoBitmap.getHeight() / ratio), false);
 
 		// draw the logo onto the bitmap
 		Canvas canvas = new Canvas(bgBitmap);
@@ -121,9 +124,8 @@ public class RecognitionActivity extends Activity {
 			} else {
 				// display the identified region for testing
 				// mStreetImageView.setImageBitmap(result.getMaskBitmap());
-				Log.d(getClass().getName(), String.valueOf(result.getCenterX()));
-				Log.d(getClass().getName(), String.valueOf(result.getCenterY()));
-				Log.d(getClass().getName(), String.valueOf(result.getCategory().CLOGO));
+				Log.v(getClass().getName(), "centerX: " + String.valueOf(result.getCenterX()));
+				Log.v(getClass().getName(), "centerY: " + String.valueOf(result.getCenterY()));
 				displayLogo(result.getCenterX() * SCALE, result.getCenterY() * SCALE,
 						result.getCategory().CLOGO);
 			}
