@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import android.os.Bundle;
@@ -34,8 +35,8 @@ public class MapFragment extends SupportMapFragment implements OnMarkerClickList
 	@Override
 	public void onResume() {
 		super.onResume();
-//		mMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
-//				.target(mCurrentLatLng).zoom(12.5f).bearing(0).tilt(0).build()));
+		mMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
+				.target(mCurrentLatLng).zoom(12.5f).bearing(0).tilt(0).build()));
 	}
 
 	public void setOnPositionClickedListener(OnPositionClickedListener listener) {
@@ -48,43 +49,33 @@ public class MapFragment extends SupportMapFragment implements OnMarkerClickList
 		mMap = getMap();
 		mMap.setOnMarkerClickListener(this);
 
-		/*
-		InputStream inStream = getResources().openRawResource(R.raw.demo_2);
+		InputStream inStream = getResources().openRawResource(R.raw.demo_3);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));
-		int start = 0;
-		int offset = start + 10;
-		int count = 0;
 		String line = "";
 		try {
 			while ((line = reader.readLine()) != null) {
 				String[] elements = line.split(" ");
-				Log.i(getClass().getName(), elements[0]);
-				Log.i(getClass().getName(),
-						String.valueOf(getResources().getIdentifier(
-								elements[0].replace(".jpg", ""), "drawable",
-								"tw.edu.ntu.netdb.demo")));
-				DemoPosition position = new DemoPosition(getResources().getIdentifier(
-						elements[0].replace(".jpg", ""), "drawable", "tw.edu.ntu.netdb.demo"),
-						Double.parseDouble(elements[1]), Double.parseDouble(elements[2]),
-						Integer.parseInt(elements[3]), Integer.parseInt(elements[4]),
-						Integer.parseInt(elements[5]));
-				Marker marker = mMap.addMarker(new MarkerOptions()
-						.title(elements[0])
-						.position(position.getLatLng())
-						.icon(BitmapDescriptorFactory
-								.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-				mPositions.put(marker, position);
-				mCurrentLatLng = position.getLatLng();
-				count++;
-				if (count == offset)
-					break;
+				String fileName = elements[0];
+				int categoryIndex = Integer.parseInt(fileName.split("_")[0].substring(1));
+				int imgResId = getResources().getIdentifier(
+						fileName.replace(".jpg", "").toLowerCase(Locale.ENGLISH), "drawable",
+						"tw.edu.ntu.netdb.demo");
+				if (imgResId != 0 && categoryIndex == 5) {
+					DemoPosition position = new DemoPosition(categoryIndex, imgResId,
+							Double.parseDouble(elements[1]), Double.parseDouble(elements[2]),
+							Integer.parseInt(elements[3]), Integer.parseInt(elements[4]),
+							Integer.parseInt(elements[5]));
+					Marker marker = mMap.addMarker(new MarkerOptions().position(position
+							.getLatLng()));
+					mPositions.put(marker, position);
+					mCurrentLatLng = position.getLatLng();
+				} else {
+					Log.d(getClass().getName(), fileName);
+				}
 			}
-			mMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
-					.target(mCurrentLatLng).zoom(12.5f).bearing(0).tilt(0).build()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		*/
 	}
 
 	// Implement OnMarkerClickListener
@@ -93,6 +84,7 @@ public class MapFragment extends SupportMapFragment implements OnMarkerClickList
 		marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
 		mCurrentLatLng = mPositions.get(marker).getLatLng();
 		mListener.OnPositionClicked(mPositions.get(marker));
+		Log.d(getClass().getName(), String.valueOf(mPositions.get(marker).getImgResId()));
 		return true;
 	}
 

@@ -1,5 +1,8 @@
 package tw.edu.ntu.netdb.demo;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -30,5 +33,17 @@ public class StaticStreetViewFragment extends Fragment {
 			}
 		});
 		return rootView;
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		Drawable drawable = mStaitcStreetView.getDrawable();
+		if (drawable instanceof BitmapDrawable) {
+			BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+			Bitmap bitmap = bitmapDrawable.getBitmap();
+			bitmap.recycle();
+			System.gc();
+		}
 	}
 }

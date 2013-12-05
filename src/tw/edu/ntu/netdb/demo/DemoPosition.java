@@ -3,18 +3,29 @@ package tw.edu.ntu.netdb.demo;
 import com.google.android.gms.maps.model.LatLng;
 
 public class DemoPosition {
+	private int categoryIndex;
 	private int imgResId;
 	private LatLng latLng;
 	private int heading;
 	private int fov;
 	private int pitch;
 
-	public DemoPosition(int imgResId, double lat, double lng, int heading, int fov, int pitch) {
+	public DemoPosition(int categoryIndex, int imgResId, double lat, double lng, int heading, int fov,
+			int pitch) {
+		setCategoryIndex(categoryIndex);
 		setImgResId(imgResId);
 		setLatLng(new LatLng(lat, lng));
 		setHeading(heading);
 		setFov(fov);
 		setPitch(pitch);
+	}
+
+	public int getCategorIndex() {
+		return categoryIndex;
+	}
+
+	public void setCategoryIndex(int categoryIndex) {
+		this.categoryIndex = categoryIndex;
 	}
 
 	public int getImgResId() {
@@ -56,5 +67,4 @@ public class DemoPosition {
 	public void setPitch(int pitch) {
 		this.pitch = pitch;
 	}
-
 }

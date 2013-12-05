@@ -1,14 +1,8 @@
 package tw.edu.ntu.netdb.demo;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
 
 import tw.edu.ntu.netdb.demo.MapFragment.OnPositionClickedListener;
 import android.app.ActionBar;
@@ -21,11 +15,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
-import android.util.SparseArray;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.SubMenu;
+import android.support.v4.app.FragmentManager;
 import android.widget.Toast;
 
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener,
@@ -44,8 +34,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	private MapFragment mMapFragment;
 	private CameraFragment mCameraFragment;
 
-	// temp
-	private SparseArray<DemoPosition> mPositions = new SparseArray<DemoPosition>();
+	// temp array for valid views
+	// private SparseArray<DemoPosition> mPositions = new
+	// SparseArray<DemoPosition>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -57,12 +48,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		mCameraFragment = new CameraFragment();
 		mMode = MODE_MAP;
 
-		// final ActionBar actionBar = getActionBar();
-		// actionBar.setDisplayShowHomeEnabled(false);
-		// actionBar.setDisplayShowTitleEnabled(false);
-		// actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-		// actionBar.addTab(actionBar.newTab().setText(R.string.title_section1).setTabListener(this));
-		// actionBar.addTab(actionBar.newTab().setText(R.string.title_section2).setTabListener(this));
+		final ActionBar actionBar = getActionBar();
+		actionBar.setDisplayShowHomeEnabled(false);
+		actionBar.setDisplayShowTitleEnabled(false);
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		actionBar.addTab(actionBar.newTab().setText(R.string.title_section1).setTabListener(this));
+		actionBar.addTab(actionBar.newTab().setText(R.string.title_section2).setTabListener(this));
 
 		Intent intent = new Intent(this, ReadDataService.class);
 		startService(intent);
@@ -71,7 +62,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	@Override
 	public void onResume() {
 		super.onResume();
-		getSupportFragmentManager().beginTransaction().replace(R.id.container, mMapFragment)
+		FragmentManager manager = getSupportFragmentManager();
+//		manager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+		manager.beginTransaction().replace(R.id.container, mMapFragment)
 				.commit();
 	}
 
@@ -90,49 +83,60 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		outState.putInt(STATE_SELECTED_NAVIGATION_ITEM, getActionBar().getSelectedNavigationIndex());
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		Map<String, SubMenu> subMenus = new HashMap<String, SubMenu>();
-
-		InputStream inStream = getResources().openRawResource(R.raw.demo_2);
-		BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));
-		String line = "";
-		try {
-			int count = 1;
-			while ((line = reader.readLine()) != null) {
-				String[] elements = line.split(" ");
-				String fileName = elements[0];
-				DemoPosition position = new DemoPosition(getResources().getIdentifier(
-						fileName.replace(".jpg", ""), "drawable", "tw.edu.ntu.netdb.demo"),
-						Double.parseDouble(elements[1]), Double.parseDouble(elements[2]),
-						Integer.parseInt(elements[3]), Integer.parseInt(elements[4]),
-						Integer.parseInt(elements[5]));
-				String key = fileName.split("_")[0] + "_" + fileName.split("_")[1];
-				if (!subMenus.containsKey(key)) {
-					subMenus.put(key, menu.addSubMenu(key));
-				}
-				MenuItem menuItem = subMenus.get(key).add(Menu.NONE, count, Menu.NONE,
-						fileName.split("_")[2]);
-				mPositions.put(menuItem.getItemId(), position);
-				count++;
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (mPositions.indexOfKey(item.getItemId()) != -1) {
-			Bundle args = new Bundle();
-			args.putDouble("lat", mPositions.get(item.getItemId()).getLatLng().latitude);
-			args.putDouble("lng", mPositions.get(item.getItemId()).getLatLng().longitude);
-			args.putInt("img_res_id", mPositions.get(item.getItemId()).getImgResId());
-			startRecognitionActivity(args);
-		}
-		return super.onOptionsItemSelected(item);
-	}
+	// @Override
+	// public boolean onCreateOptionsMenu(Menu menu) {
+	// Map<String, SubMenu> subMenus = new HashMap<String, SubMenu>();
+	//
+	// InputStream inStream = getResources().openRawResource(R.raw.demo_3);
+	// BufferedReader reader = new BufferedReader(new
+	// InputStreamReader(inStream));
+	// String line = "";
+	// try {
+	// int count = 1;
+	// while ((line = reader.readLine()) != null) {
+	// String[] elements = line.split(" ");
+	// String fileName = elements[0];
+	// int categoryIndex =
+	// Integer.parseInt(fileName.split("_")[0].substring(1));
+	// DemoPosition position = new DemoPosition(categoryIndex, getResources()
+	// .getIdentifier(fileName.replace(".jpg", ""), "drawable",
+	// "tw.edu.ntu.netdb.demo"), Double.parseDouble(elements[1]),
+	// Double.parseDouble(elements[2]), Integer.parseInt(elements[3]),
+	// Integer.parseInt(elements[4]), Integer.parseInt(elements[5]));
+	// String key = fileName.split("_")[0] + "_" + fileName.split("_")[1];
+	// if (!subMenus.containsKey(key)) {
+	// subMenus.put(key, menu.addSubMenu(key));
+	// }
+	// MenuItem menuItem = subMenus.get(key).add(Menu.NONE, count, Menu.NONE,
+	// fileName.split("_")[2]);
+	// // MenuItem menuItem = menu.add(Menu.NONE, count, Menu.NONE,
+	// // fileName);
+	// mPositions.put(menuItem.getItemId(), position);
+	// count++;
+	// }
+	// } catch (IOException e) {
+	// e.printStackTrace();
+	// }
+	// return true;
+	// }
+	//
+	// @Override
+	// public boolean onOptionsItemSelected(MenuItem item) {
+	// if (mPositions.indexOfKey(item.getItemId()) != -1) {
+	// Bundle args = new Bundle();
+	// args.putInt("category_index",
+	// mPositions.get(item.getItemId()).getCategorIndex());
+	// args.putInt("img_res_id",
+	// mPositions.get(item.getItemId()).getImgResId());
+	// args.putDouble("lat",
+	// mPositions.get(item.getItemId()).getLatLng().latitude);
+	// args.putDouble("lng",
+	// mPositions.get(item.getItemId()).getLatLng().longitude);
+	// startRecognitionActivity(args);
+	// item.setVisible(false);
+	// }
+	// return super.onOptionsItemSelected(item);
+	// }
 
 	public void savePicture(String filename, Bitmap bitmap, float rotateDegree) {
 		try {
@@ -206,14 +210,15 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	@Override
 	public void OnPositionClicked(DemoPosition position) {
 		Bundle bundle = new Bundle();
+		bundle.putInt("category_index", position.getCategorIndex());
+		bundle.putInt("img_res_id", position.getImgResId());
 		bundle.putDouble("lat", position.getLatLng().latitude);
 		bundle.putDouble("lng", position.getLatLng().longitude);
-		bundle.putInt("img_res_id", position.getImgResId());
 		StaticStreetViewFragment fragment = new StaticStreetViewFragment();
 		fragment.setArguments(bundle);
 		mMode = MODE_STREETVIEW;
-		getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment)
-				.addToBackStack(null).commit();
+		getSupportFragmentManager().beginTransaction()
+				.replace(R.id.container, fragment).addToBackStack(null).commit();
 	}
 
 	@Override

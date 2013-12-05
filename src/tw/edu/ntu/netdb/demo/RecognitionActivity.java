@@ -16,12 +16,15 @@ import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 public class RecognitionActivity extends Activity {
 	private Context mContext;
 	private ImageView mStreetImageView;
 	private ImageView mLogoImageView;
 	private Bitmap mProcessedBitmap;
+
+	private int mCategory;
 
 	private static final int SCALE = 3;
 	private static int sOriginalWidth;
@@ -38,6 +41,7 @@ public class RecognitionActivity extends Activity {
 		Bundle args = getIntent().getExtras();
 		if (!args.containsKey("street_bitmap")) {
 			int imgResId = args.getInt("img_res_id");
+			mCategory = args.getInt("category_index");
 			mStreetImageView = (ImageView) findViewById(R.id.imageView_street);
 			mStreetImageView.setImageResource(imgResId);
 			mProcessedBitmap = BitmapFactory.decodeResource(getResources(), imgResId);
@@ -76,16 +80,16 @@ public class RecognitionActivity extends Activity {
 				Bitmap.Config.ARGB_8888);
 		// read the logo from res
 		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inSampleSize = 20;
+		options.inSampleSize = 10;
 		Bitmap logoBitmap = BitmapFactory.decodeResource(getResources(), category, options);
+		int scale = 200 / Math.max(logoBitmap.getWidth(), logoBitmap.getHeight());
+		logoBitmap = Bitmap.createScaledBitmap(logoBitmap, logoBitmap.getWidth() * scale,
+				logoBitmap.getHeight() * scale, false);
 
 		// draw the logo onto the bitmap
 		Canvas canvas = new Canvas(bgBitmap);
 		canvas.drawColor(Color.TRANSPARENT);
 		Paint paint = new Paint();
-		// paint.setColor(Color.YELLOW);
-		// paint.setStrokeWidth(2);
-		// paint.setStyle(Paint.Style.STROKE);
 		canvas.drawBitmap(logoBitmap, centerX - logoBitmap.getWidth() / 2,
 				(centerY - logoBitmap.getHeight() / 2) + (sOriginalHeight - sOriginalWidth), paint);
 
@@ -107,15 +111,22 @@ public class RecognitionActivity extends Activity {
 	private class IdentifyTask extends AsyncTask<String, Void, Result> {
 		protected Result doInBackground(String... params) {
 			MOSROHelper helper = new MOSROHelper(mContext);
-			return helper.identify(mProcessedBitmap);
+			return helper.identify(mCategory, mProcessedBitmap);
 		}
 
 		protected void onPostExecute(Result result) {
 			setProgressBarIndeterminateVisibility(false);
-			// display the identified region for testing
-			mStreetImageView.setImageBitmap(result.getMaskBitmap());
-			displayLogo(result.getCenterX() * SCALE, result.getCenterY() * SCALE,
-					result.getCategory().CLOGO);
+			if (result == null) {
+				Toast.makeText(getApplicationContext(), "No results!", Toast.LENGTH_SHORT).show();
+			} else {
+				// display the identified region for testing
+				// mStreetImageView.setImageBitmap(result.getMaskBitmap());
+				Log.d(getClass().getName(), String.valueOf(result.getCenterX()));
+				Log.d(getClass().getName(), String.valueOf(result.getCenterY()));
+				Log.d(getClass().getName(), String.valueOf(result.getCategory().CLOGO));
+				displayLogo(result.getCenterX() * SCALE, result.getCenterY() * SCALE,
+						result.getCategory().CLOGO);
+			}
 		}
 	}
 }

@@ -24,7 +24,7 @@ public class MOSROHelper {
 		mContext = context;
 	}
 	
-	public Result identify(Bitmap bmp) {
+	public Result identify(int categoryIndex, Bitmap bmp) {
         Mat mat_rgb = new Mat(bmp.getHeight() , bmp.getWidth(), CvType.CV_8UC4);
         mat_rgb = Utils.bitmapToMat(bmp);
         // MOSRO params (See class MOSROParams.java)
@@ -38,21 +38,38 @@ public class MOSROHelper {
 		//File file = new File(path, "demo.jpg");
         //File myDir=new File("/sdcard/MOSRO");                
         //myDir.mkdirs();                
+        boolean[] mcc_mask = null;
+        boolean[] tmp_mask;
         boolean[][] Mask;
-        double max_pos = 0;
+//        double max_pos = 0;
+        double max_mcc = 0;
         int max_c = -1;
         int size = output.category.size();                
         for (int c=0;c<size;c++){
-        	double pos = output.PosGrid(c);
-        	if (pos > max_pos){
-        		max_pos = pos;
+//        	tmp_mask = output.MostConnectedComponent(c, GridSize);
+//        	if (output.mcc[c] > max_mcc) {
+        	Log.d(getClass().getName(), String.valueOf(categoryIndex));
+        	Log.d(getClass().getName(), String.valueOf(output.category.get(c).CID));
+        	if (categoryIndex == output.category.get(c).CID) {
         		max_c = c;
+        		mcc_mask = output.MostConnectedComponent(c, GridSize);
+        		break;
         	}
+//        	double pos = output.PosGrid(c);
+//        	if (pos > max_pos){
+//        		max_pos = pos;
+//        		max_c = c;
+//        	}
         }
         
         // compute mask
     	//Mask = MOSRO_Mask(output.y[max_c], GridSize, mat_rgb.cols(), mat_rgb.rows());
-        Mask = MOSRO_Mask(output.MostConnectedComponent(max_c, GridSize), GridSize, mat_rgb.cols(), mat_rgb.rows());
+//        Mask = MOSRO_Mask(output.MostConnectedComponent(max_c, GridSize), GridSize, mat_rgb.cols(), mat_rgb.rows());
+        if (max_c == -1) {
+        	return null;
+        }
+        Mask = MOSRO_Mask(mcc_mask, GridSize, mat_rgb.cols(), mat_rgb.rows());
+        //Mask = MOSRO_Mask(output.y[max_c], GridSize, mat_rgb.cols(), mat_rgb.rows());
         // output LOGO
         //output.category.get(max_c).CLOGO;
         // output image
