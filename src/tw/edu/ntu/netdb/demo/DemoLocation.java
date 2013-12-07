@@ -2,7 +2,7 @@ package tw.edu.ntu.netdb.demo;
 
 import com.google.android.gms.maps.model.LatLng;
 
-public class DemoPosition {
+public class DemoLocation {
 	private int categoryIndex;
 	private int imgResId;
 	private LatLng latLng;
@@ -10,7 +10,7 @@ public class DemoPosition {
 	private int fov;
 	private int pitch;
 
-	public DemoPosition(int categoryIndex, int imgResId, double lat, double lng, int heading, int fov,
+	public DemoLocation(int categoryIndex, int imgResId, double lat, double lng, int heading, int fov,
 			int pitch) {
 		setCategoryIndex(categoryIndex);
 		setImgResId(imgResId);

@@ -49,7 +49,7 @@ public class RecognitionActivity extends Activity {
 			// BitmapFactory.decodeResource(getResources(), R.drawable.tt5);
 			sOriginalWidth = mProcessedBitmap.getWidth();
 			sOriginalHeight = mProcessedBitmap.getHeight();
-			
+
 			// resize the bitmap
 			mProcessedBitmap = Bitmap.createScaledBitmap(mProcessedBitmap, sOriginalWidth / SCALE,
 					sOriginalHeight / SCALE, false);
@@ -70,19 +70,21 @@ public class RecognitionActivity extends Activity {
 		new IdentifyTask().execute();
 	}
 
-	private void displayLogo(int centerX, int centerY, int category) {
-		// recycle the unused in free of out of memory
+	@Override
+	public void onStop() {
+		super.onStop();
 		mProcessedBitmap.recycle();
+	}
+
+	private void displayLogo(int centerX, int centerY, int category) {
 		// create a bitmap overlaying the original street view bitmap for
 		// displaying results
 		Bitmap bgBitmap = Bitmap.createBitmap(sOriginalWidth, sOriginalHeight,
 				Bitmap.Config.ARGB_8888);
-		// read the logo from res
+		// read the logo from res and resize it
 		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inSampleSize = 10;
+		// options.inSampleSize = 10;
 		Bitmap logoBitmap = BitmapFactory.decodeResource(getResources(), category, options);
-		
-		
 		double average = (logoBitmap.getWidth() + logoBitmap.getHeight()) / 2.0;
 		double threshold = 150.0;
 		double ratio = average / threshold;

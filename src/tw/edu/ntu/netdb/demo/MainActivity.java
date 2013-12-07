@@ -8,10 +8,12 @@ import tw.edu.ntu.netdb.demo.MapFragment.OnPositionClickedListener;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
@@ -31,10 +33,11 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 	private int mMode;
 
+	private ProgressDialog mDialog = null;
 	private MapFragment mMapFragment;
 	private CameraFragment mCameraFragment;
 
-	// temp array for valid views
+	// temporary array for valid views
 	// private SparseArray<DemoPosition> mPositions = new
 	// SparseArray<DemoPosition>();
 
@@ -42,6 +45,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		mDialog = ProgressDialog.show(this, "Loading", "Please wait...");
 
 		mMapFragment = new MapFragment();
 		mMapFragment.setOnPositionClickedListener(this);
@@ -55,17 +59,17 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		actionBar.addTab(actionBar.newTab().setText(R.string.title_section1).setTabListener(this));
 		actionBar.addTab(actionBar.newTab().setText(R.string.title_section2).setTabListener(this));
 
-		Intent intent = new Intent(this, ReadDataService.class);
-		startService(intent);
+		// Intent intent = new Intent(this, ReadDataService.class);
+		// startService(intent);
+		new ReadResTask().execute();
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
 		FragmentManager manager = getSupportFragmentManager();
-//		manager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-		manager.beginTransaction().replace(R.id.container, mMapFragment)
-				.commit();
+		// manager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+		manager.beginTransaction().replace(R.id.container, mMapFragment).commit();
 	}
 
 	@Override
@@ -208,7 +212,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	}
 
 	@Override
-	public void OnPositionClicked(DemoPosition position) {
+	public void OnPositionClicked(DemoLocation position) {
 		Bundle bundle = new Bundle();
 		bundle.putInt("category_index", position.getCategorIndex());
 		bundle.putInt("img_res_id", position.getImgResId());
@@ -217,8 +221,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		StaticStreetViewFragment fragment = new StaticStreetViewFragment();
 		fragment.setArguments(bundle);
 		mMode = MODE_STREETVIEW;
-		getSupportFragmentManager().beginTransaction()
-				.replace(R.id.container, fragment).addToBackStack(null).commit();
+		getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment)
+				.addToBackStack(null).commit();
 	}
 
 	@Override
@@ -228,6 +232,18 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			mMode = MODE_MAP;
 		} else {
 			super.onBackPressed();
+		}
+	}
+
+	private class ReadResTask extends AsyncTask<String, String, String> {
+		protected String doInBackground(String... args) {
+			AppResourceManager manager = (AppResourceManager) getApplicationContext();
+			manager.setCategories();
+			return "";
+		}
+
+		protected void onPostExecute(String result) {
+			mDialog.dismiss();
 		}
 	}
 }

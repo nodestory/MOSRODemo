@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import android.os.Bundle;
@@ -15,7 +14,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -24,7 +22,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapFragment extends SupportMapFragment implements OnMarkerClickListener {
 	private GoogleMap mMap;
 	private LatLng mCurrentLatLng = null;
-	private Map<Marker, DemoPosition> mPositions = new HashMap<Marker, DemoPosition>();
+	private Map<Marker, DemoLocation> mLocations = new HashMap<Marker, DemoLocation>();
 	private OnPositionClickedListener mListener;
 
 	@Override
@@ -49,7 +47,7 @@ public class MapFragment extends SupportMapFragment implements OnMarkerClickList
 		mMap = getMap();
 		mMap.setOnMarkerClickListener(this);
 
-		InputStream inStream = getResources().openRawResource(R.raw.demo_3);
+		InputStream inStream = getResources().openRawResource(R.raw.demo_locations);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));
 		String line = "";
 		try {
@@ -57,17 +55,16 @@ public class MapFragment extends SupportMapFragment implements OnMarkerClickList
 				String[] elements = line.split(" ");
 				String fileName = elements[0];
 				int categoryIndex = Integer.parseInt(fileName.split("_")[0].substring(1));
-				int imgResId = getResources().getIdentifier(
-						fileName.replace(".jpg", "").toLowerCase(Locale.ENGLISH), "drawable",
-						"tw.edu.ntu.netdb.demo");
-				if (imgResId != 0 && categoryIndex == 15) {
-					DemoPosition position = new DemoPosition(categoryIndex, imgResId,
+				int imgResId = getResources().getIdentifier(fileName.replace(".jpg", ""),
+						"drawable", "tw.edu.ntu.netdb.demo");
+				if (imgResId != 0) {
+					DemoLocation position = new DemoLocation(categoryIndex, imgResId,
 							Double.parseDouble(elements[1]), Double.parseDouble(elements[2]),
 							Integer.parseInt(elements[3]), Integer.parseInt(elements[4]),
 							Integer.parseInt(elements[5]));
 					Marker marker = mMap.addMarker(new MarkerOptions().position(position
 							.getLatLng()));
-					mPositions.put(marker, position);
+					mLocations.put(marker, position);
 					mCurrentLatLng = position.getLatLng();
 				} else {
 					Log.d(getClass().getName(), fileName);
@@ -81,14 +78,12 @@ public class MapFragment extends SupportMapFragment implements OnMarkerClickList
 	// Implement OnMarkerClickListener
 	@Override
 	public boolean onMarkerClick(Marker marker) {
-		marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-		mCurrentLatLng = mPositions.get(marker).getLatLng();
-		mListener.OnPositionClicked(mPositions.get(marker));
-		Log.d(getClass().getName(), String.valueOf(mPositions.get(marker).getImgResId()));
+		mCurrentLatLng = mLocations.get(marker).getLatLng();
+		mListener.OnPositionClicked(mLocations.get(marker));
 		return true;
 	}
 
 	public interface OnPositionClickedListener {
-		public void OnPositionClicked(DemoPosition position);
+		public void OnPositionClicked(DemoLocation position);
 	}
 }

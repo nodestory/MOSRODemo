@@ -15,7 +15,7 @@ public class Result {
 		setCategory(category);
 		setMaskBitmap(maskBitmap);
 		setMask(mask);
-		
+
 		// find the center of the a logo
 		int left = 0;
 		int top = 0;
@@ -39,8 +39,8 @@ public class Result {
 				}
 			}
 		}
-		setCenterX((left + right)/2);
-		setCenterY((top + bottom)/2);
+		setCenterX((left + right) / 2);
+		setCenterY((top + bottom) / 2);
 	}
 
 	public MOSROCategory getCategory() {

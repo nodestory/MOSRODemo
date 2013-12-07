@@ -3,4 +3,5 @@
     <issue id="ContentDescription">
         <ignore path="res/layout/layout_street_view.xml" />
     </issue>
+    <issue id="MissingTranslation" severity="ignore" />
 </lint>
