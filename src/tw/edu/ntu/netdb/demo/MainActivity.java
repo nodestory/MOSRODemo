@@ -3,8 +3,12 @@ package tw.edu.ntu.netdb.demo;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Map;
 
 import tw.edu.ntu.netdb.demo.MapFragment.OnPositionClickedListener;
+import android.R.integer;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
@@ -18,7 +22,10 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.widget.Toast;
+
+import com.google.android.gms.maps.model.LatLng;
 
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener,
 		OnPositionClickedListener {
@@ -35,6 +42,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 	private ProgressDialog mDialog = null;
 	private MapFragment mMapFragment;
+	private StaticStreetViewFragment mStaticStreetViewFragment;
 	private CameraFragment mCameraFragment;
 
 	// temporary array for valid views
@@ -59,6 +67,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		actionBar.addTab(actionBar.newTab().setText(R.string.title_section1).setTabListener(this));
 		actionBar.addTab(actionBar.newTab().setText(R.string.title_section2).setTabListener(this));
 
+		AppResourceManager manager = (AppResourceManager) getApplicationContext();
+		manager.setDemoLocaions();
 		// Intent intent = new Intent(this, ReadDataService.class);
 		// startService(intent);
 		new ReadResTask().execute();
@@ -212,17 +222,28 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	}
 
 	@Override
-	public void OnPositionClicked(DemoLocation position) {
+	public void OnPositionClicked(LatLng latLng) {
+		Bundle bundle = new Bundle();
+		bundle.putParcelable("location", latLng);
+		mStaticStreetViewFragment = new StaticStreetViewFragment();
+		mStaticStreetViewFragment.setArguments(bundle);
+		mMode = MODE_STREETVIEW;
+		getSupportFragmentManager().beginTransaction().replace(R.id.container, mStaticStreetViewFragment).commit();
+		/*
 		Bundle bundle = new Bundle();
 		bundle.putInt("category_index", position.getCategorIndex());
 		bundle.putInt("img_res_id", position.getImgResId());
 		bundle.putDouble("lat", position.getLatLng().latitude);
 		bundle.putDouble("lng", position.getLatLng().longitude);
-		StaticStreetViewFragment fragment = new StaticStreetViewFragment();
-		fragment.setArguments(bundle);
+//		StaticStreetViewFragment fragment = new StaticStreetViewFragment();
+//		fragment.setArguments(bundle);
+		mStaticStreetViewFragment = new StaticStreetViewFragment();
+		mStaticStreetViewFragment.setArguments(bundle);
 		mMode = MODE_STREETVIEW;
-		getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment)
-				.addToBackStack(null).commit();
+//		getSupportFragmentManager().beginTransaction().replace(R.id.container, mStaticStreetViewFragment)
+//				.addToBackStack(null).commit();
+		getSupportFragmentManager().beginTransaction().replace(R.id.container, mStaticStreetViewFragment).commit();
+		*/
 	}
 
 	@Override

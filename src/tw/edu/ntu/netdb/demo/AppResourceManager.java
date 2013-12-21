@@ -5,12 +5,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.opencv.samples.tutorial4.MOSROCategory;
 
 import android.app.Application;
 import android.util.Log;
+
+import com.google.android.gms.maps.model.LatLng;
 
 public class AppResourceManager extends Application {
 	private static final int[] INDEXES = { 5, 15, 23, 24, 25, 36, 38, 44, 45, 58, 60, 62 };
@@ -18,6 +22,7 @@ public class AppResourceManager extends Application {
 	private int[] kernels = new int[INDEXES.length];
 	private int[] vocs = new int[INDEXES.length];
 	private List<MOSROCategory> categories = new ArrayList<MOSROCategory>();
+	private Map<LatLng, ArrayList<DemoLocation>> locations = new HashMap<LatLng, ArrayList<DemoLocation>>();
 
 	private boolean isLoading = true;
 
@@ -95,5 +100,40 @@ public class AppResourceManager extends Application {
 
 	public List<MOSROCategory> getCategories() {
 		return categories;
+	}
+
+	public void setDemoLocaions() {
+		InputStream inStream = getResources().openRawResource(R.raw.demo_locations);
+		BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));
+		String line = "";
+		try {
+			while ((line = reader.readLine()) != null) {
+				String[] elements = line.split(" ");
+				String fileName = elements[0];
+				int categoryIndex = Integer.parseInt(fileName.split("_")[0].substring(1));
+				int imgResId = getResources().getIdentifier(fileName.replace(".jpg", ""),
+						"drawable", "tw.edu.ntu.netdb.demo");
+				if (imgResId != 0) {
+					DemoLocation location = new DemoLocation(categoryIndex, imgResId,
+							Double.parseDouble(elements[1]), Double.parseDouble(elements[2]),
+							Integer.parseInt(elements[3]), Integer.parseInt(elements[4]),
+							Integer.parseInt(elements[5]));
+					LatLng latLng = new LatLng(Double.parseDouble(elements[1]),
+							Double.parseDouble(elements[2]));
+					if (!locations.containsKey(latLng)) {
+						locations.put(latLng, new ArrayList<DemoLocation>());
+					}
+					locations.get(latLng).add(location);
+				} else {
+					Log.d(getClass().getName(), fileName);
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public Map<LatLng, ArrayList<DemoLocation>> getDemoLocaions() {
+		return locations;
 	}
 }

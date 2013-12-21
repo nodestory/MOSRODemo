@@ -23,6 +23,8 @@ public class RecognitionActivity extends Activity {
 	private ImageView mStreetImageView;
 	private ImageView mLogoImageView;
 	private Bitmap mProcessedBitmap;
+	private Bitmap mDisplayedBitmap;
+	private Bitmap mLogoBitmap;
 
 	private int mCategory;
 
@@ -73,32 +75,46 @@ public class RecognitionActivity extends Activity {
 	@Override
 	public void onStop() {
 		super.onStop();
-		mProcessedBitmap.recycle();
+		try {
+			if (!mProcessedBitmap.isRecycled())
+				mProcessedBitmap.recycle();
+			mProcessedBitmap = null;
+			if (!mDisplayedBitmap.isRecycled())
+				mDisplayedBitmap.recycle();
+			mDisplayedBitmap = null;
+			if (!mLogoBitmap.isRecycled())
+				mLogoBitmap.recycle();
+			System.gc();
+		} catch (Exception e) {
+		}
 	}
 
 	private void displayLogo(int centerX, int centerY, int category) {
 		// create a bitmap overlaying the original street view bitmap for
 		// displaying results
-		Bitmap bgBitmap = Bitmap.createBitmap(sOriginalWidth, sOriginalHeight,
+		mDisplayedBitmap = Bitmap.createBitmap(sOriginalWidth, sOriginalHeight,
 				Bitmap.Config.ARGB_8888);
 		// read the logo from res and resize it
 		BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inPurgeable = true;
+		options.inInputShareable = true;
 		// options.inSampleSize = 10;
-		Bitmap logoBitmap = BitmapFactory.decodeResource(getResources(), category, options);
-		double average = (logoBitmap.getWidth() + logoBitmap.getHeight()) / 2.0;
+		mLogoBitmap = BitmapFactory.decodeResource(getResources(), category, options);
+		double average = (mLogoBitmap.getWidth() + mLogoBitmap.getHeight()) / 2.0;
 		double threshold = 150.0;
 		double ratio = average / threshold;
-		logoBitmap = Bitmap.createScaledBitmap(logoBitmap, (int) (logoBitmap.getWidth() / ratio),
-				(int) (logoBitmap.getHeight() / ratio), false);
+		mLogoBitmap = Bitmap.createScaledBitmap(mLogoBitmap,
+				(int) (mLogoBitmap.getWidth() / ratio), (int) (mLogoBitmap.getHeight() / ratio),
+				false);
 
 		// draw the logo onto the bitmap
-		Canvas canvas = new Canvas(bgBitmap);
+		Canvas canvas = new Canvas(mDisplayedBitmap);
 		canvas.drawColor(Color.TRANSPARENT);
 		Paint paint = new Paint();
-		canvas.drawBitmap(logoBitmap, centerX - logoBitmap.getWidth() / 2,
-				(centerY - logoBitmap.getHeight() / 2) + (sOriginalHeight - sOriginalWidth), paint);
+		canvas.drawBitmap(mLogoBitmap, centerX - mLogoBitmap.getWidth() / 2,
+				(centerY - mLogoBitmap.getHeight() / 2) + (sOriginalHeight - sOriginalWidth), paint);
 
-		mLogoImageView.setImageBitmap(bgBitmap);
+		mLogoImageView.setImageBitmap(mDisplayedBitmap);
 
 		// set the animation
 		final Animation scaleAnimation = new ScaleAnimation(2f, 1f, 2f, 1f,
