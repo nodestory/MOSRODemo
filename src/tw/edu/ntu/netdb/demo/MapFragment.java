@@ -49,9 +49,11 @@ public class MapFragment extends SupportMapFragment implements OnMarkerClickList
 		AppResourceManager manager = (AppResourceManager) getActivity().getApplicationContext();
 		Map<LatLng, ArrayList<DemoLocation>> locations = manager.getDemoLocaions();
 		for (LatLng latLng : locations.keySet()) {
-			mMap.addMarker(new MarkerOptions().position(latLng).icon(
-					BitmapDescriptorFactory.defaultMarker(locations.get(latLng).size() > 1 ? 100
-							: 0)));
+			mMap.addMarker(new MarkerOptions()
+					.position(latLng)
+					.icon(BitmapDescriptorFactory
+							.defaultMarker(locations.get(latLng).size() > 1 ? BitmapDescriptorFactory.HUE_BLUE
+									: BitmapDescriptorFactory.HUE_RED)));
 			mMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
 					.target(latLng).zoom(12.5f).bearing(0).tilt(0).build()));
 		}

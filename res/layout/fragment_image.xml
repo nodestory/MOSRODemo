@@ -4,30 +4,21 @@
     android:layout_height="match_parent"
     android:background="#ff000000" >
 
-    <android.support.v4.view.ViewPager
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/pager"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/imageButton_take"
-        android:layout_alignParentTop="true" />
-    
-    <!--
     <ImageView
-        android:id="@+id/imageView_static_streetview"
+        android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#ff000000"
+        android:layout_alignParentBottom="true"
         android:src="@drawable/c62_25_138644_121_502129_n3o1tp3r2dbslkww032cma_0" />
 
-    -->
-    
-    <ImageButton
-        android:id="@+id/imageButton_take"
+    <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/ic_camara" />
+        android:text="1/1"
+        android:textColor="#ffffff"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </RelativeLayout>

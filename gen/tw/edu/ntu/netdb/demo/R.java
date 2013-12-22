@@ -1210,28 +1210,30 @@ containing a value of this type.
     public static final class id {
         public static final int container=0x7f070005;
         public static final int hybrid=0x7f070004;
-        public static final int imageButton_move_forward=0x7f070012;
+        public static final int imageButton_move_forward=0x7f070014;
         public static final int imageButton_take=0x7f070009;
-        public static final int imageView1=0x7f070013;
+        public static final int imageView=0x7f07000a;
+        public static final int imageView1=0x7f070015;
         public static final int imageView_logos=0x7f070007;
-        public static final int imageView_static_streetview=0x7f07000b;
         public static final int imageView_street=0x7f070006;
-        public static final int imageView_street_view=0x7f07000c;
-        public static final int imageView_zoom_in=0x7f07000f;
-        public static final int imageView_zoom_out=0x7f070011;
-        public static final int layout_zoom=0x7f07000e;
+        public static final int imageView_street_view=0x7f07000d;
+        public static final int imageView_zoom_in=0x7f070011;
+        public static final int imageView_zoom_out=0x7f070013;
+        public static final int layout_zoom=0x7f070010;
         public static final int none=0x7f070000;
         public static final int normal=0x7f070001;
+        public static final int pager=0x7f07000c;
         public static final int satellite=0x7f070002;
-        public static final int search=0x7f070017;
-        public static final int seekBar=0x7f070010;
+        public static final int search=0x7f070019;
+        public static final int seekBar=0x7f070012;
         public static final int surfaceView_preview=0x7f070008;
         public static final int terrain=0x7f070003;
-        public static final int textView_addr=0x7f070015;
-        public static final int textView_address=0x7f07000a;
-        public static final int textView_intro=0x7f070016;
-        public static final int textView_name=0x7f070014;
-        public static final int webView=0x7f07000d;
+        public static final int textView=0x7f07000b;
+        public static final int textView_addr=0x7f070017;
+        public static final int textView_address=0x7f07000f;
+        public static final int textView_intro=0x7f070018;
+        public static final int textView_name=0x7f070016;
+        public static final int webView=0x7f07000e;
     }
     public static final class integer {
         public static final int google_play_services_version=0x7f090000;
@@ -1240,11 +1242,12 @@ containing a value of this type.
         public static final int activity_main=0x7f030000;
         public static final int activity_recognition=0x7f030001;
         public static final int fragment_camera=0x7f030002;
-        public static final int fragment_static_streetview=0x7f030003;
-        public static final int fragment_street_view=0x7f030004;
-        public static final int fragment_street_view_testing=0x7f030005;
-        public static final int layout_street_view=0x7f030006;
-        public static final int resultview=0x7f030007;
+        public static final int fragment_image=0x7f030003;
+        public static final int fragment_static_streetview=0x7f030004;
+        public static final int fragment_street_view=0x7f030005;
+        public static final int fragment_street_view_testing=0x7f030006;
+        public static final int layout_street_view=0x7f030007;
+        public static final int resultview=0x7f030008;
     }
     public static final class menu {
         public static final int activity_main=0x7f0b0000;

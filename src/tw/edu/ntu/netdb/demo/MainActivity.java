@@ -48,22 +48,24 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		mDialog = ProgressDialog.show(this, "Loading", "Please wait...");
 
+		mDialog = ProgressDialog.show(this, "Loading", "Please wait...");
+		
 		mMapFragment = new MapFragment();
 		mMapFragment.setOnPositionClickedListener(this);
 		mCameraFragment = new CameraFragment();
 		mMode = MODE_MAP;
 
 		final ActionBar actionBar = getActionBar();
-		actionBar.setDisplayShowHomeEnabled(false);
-		actionBar.setDisplayShowTitleEnabled(false);
+		// actionBar.setDisplayShowHomeEnabled(false);
+		// actionBar.setDisplayShowTitleEnabled(false);
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		actionBar.addTab(actionBar.newTab().setText(R.string.title_section1).setTabListener(this));
 		actionBar.addTab(actionBar.newTab().setText(R.string.title_section2).setTabListener(this));
 
 		AppResourceManager manager = (AppResourceManager) getApplicationContext();
 		manager.setDemoLocaions();
+		
 		// Intent intent = new Intent(this, ReadDataService.class);
 		// startService(intent);
 		new ReadResTask().execute();

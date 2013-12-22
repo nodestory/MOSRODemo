@@ -102,6 +102,22 @@ public class AppResourceManager extends Application {
 		return categories;
 	}
 
+	private double computeDist(double lat_a, double lng_a, double lat_b, double lng_b) {
+		float pk = (float) (180 / 3.14169);
+
+		double a1 = lat_a / pk;
+		double a2 = lng_a / pk;
+		double b1 = lat_b / pk;
+		double b2 = lng_b / pk;
+
+		double t1 = Math.cos(a1) * Math.cos(a2) * Math.cos(b1) * Math.cos(b2);
+		double t2 = Math.cos(a1) * Math.sin(a2) * Math.cos(b1) * Math.sin(b2);
+		double t3 = Math.sin(a1) * Math.sin(b1);
+		double tt = Math.acos(t1 + t2 + t3);
+
+		return 6366000 * tt;
+	}
+
 	public void setDemoLocaions() {
 		InputStream inStream = getResources().openRawResource(R.raw.demo_locations);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));
@@ -113,19 +129,23 @@ public class AppResourceManager extends Application {
 				int categoryIndex = Integer.parseInt(fileName.split("_")[0].substring(1));
 				int imgResId = getResources().getIdentifier(fileName.replace(".jpg", ""),
 						"drawable", "tw.edu.ntu.netdb.demo");
-				if (imgResId != 0) {
-					DemoLocation location = new DemoLocation(categoryIndex, imgResId,
-							Double.parseDouble(elements[1]), Double.parseDouble(elements[2]),
-							Integer.parseInt(elements[3]), Integer.parseInt(elements[4]),
-							Integer.parseInt(elements[5]));
-					LatLng latLng = new LatLng(Double.parseDouble(elements[1]),
-							Double.parseDouble(elements[2]));
-					if (!locations.containsKey(latLng)) {
-						locations.put(latLng, new ArrayList<DemoLocation>());
+				DemoLocation location = new DemoLocation(categoryIndex, imgResId,
+						Double.parseDouble(elements[1]), Double.parseDouble(elements[2]),
+						Integer.parseInt(elements[3]), Integer.parseInt(elements[4]),
+						Integer.parseInt(elements[5]));
+				LatLng latLng = new LatLng(Double.parseDouble(elements[1]),
+						Double.parseDouble(elements[2]));
+				for (LatLng key : locations.keySet()) {
+					if (computeDist(key.latitude, key.longitude, latLng.latitude, latLng.longitude) < 15
+							&& locations.get(key).get(0).getCategorIndex() == categoryIndex) {
+						locations.get(key).add(location);
+						latLng = null;
+						break;
 					}
+				}
+				if (latLng != null) {
+					locations.put(latLng, new ArrayList<DemoLocation>());
 					locations.get(latLng).add(location);
-				} else {
-					Log.d(getClass().getName(), fileName);
 				}
 			}
 		} catch (IOException e) {
