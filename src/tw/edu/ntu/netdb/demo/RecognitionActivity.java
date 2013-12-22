@@ -28,7 +28,8 @@ public class RecognitionActivity extends Activity {
 
 	private int mCategory;
 
-	private static final int SCALE = 3;
+	private static final int WIDTH = 300;
+	private static final int HEIGHT = 300;
 	private static int sOriginalWidth;
 	private static int sOriginalHeight;
 
@@ -49,25 +50,25 @@ public class RecognitionActivity extends Activity {
 			mProcessedBitmap = BitmapFactory.decodeResource(getResources(), imgResId);
 			// pseudo image for testing
 			// BitmapFactory.decodeResource(getResources(), R.drawable.tt5);
-			sOriginalWidth = mProcessedBitmap.getWidth();
-			sOriginalHeight = mProcessedBitmap.getHeight();
 
-			// resize the bitmap
-			mProcessedBitmap = Bitmap.createScaledBitmap(mProcessedBitmap, sOriginalWidth / SCALE,
-					sOriginalHeight / SCALE, false);
-			mLogoImageView = (ImageView) findViewById(R.id.imageView_logos);
 		} else {
 			byte[] byteArray = getIntent().getByteArrayExtra("street_bitmap");
 			Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+			mStreetImageView = (ImageView) findViewById(R.id.imageView_street);
+			mStreetImageView.setImageBitmap(bitmap);
 			// get the center part of the bitmap
 			if (bitmap.getHeight() > bitmap.getWidth()) {
 				mProcessedBitmap = Bitmap.createBitmap(bitmap, 0,
 						bitmap.getHeight() / 2 - bitmap.getWidth() / 2, bitmap.getWidth(),
 						bitmap.getWidth());
 			}
-			mStreetImageView = (ImageView) findViewById(R.id.imageView_street);
-			mLogoImageView = (ImageView) findViewById(R.id.imageView_logos);
 		}
+		sOriginalWidth = mProcessedBitmap.getWidth();
+		sOriginalHeight = mProcessedBitmap.getHeight();
+		// resize the bitmap
+		mProcessedBitmap = Bitmap.createScaledBitmap(mProcessedBitmap, WIDTH, HEIGHT, false);
+		
+		mLogoImageView = (ImageView) findViewById(R.id.imageView_logos);
 
 		new IdentifyTask().execute();
 	}
@@ -144,8 +145,8 @@ public class RecognitionActivity extends Activity {
 				// mStreetImageView.setImageBitmap(result.getMaskBitmap());
 				Log.v(getClass().getName(), "centerX: " + String.valueOf(result.getCenterX()));
 				Log.v(getClass().getName(), "centerY: " + String.valueOf(result.getCenterY()));
-				displayLogo(result.getCenterX() * SCALE, result.getCenterY() * SCALE,
-						result.getCategory().CLOGO);
+				displayLogo(result.getCenterX() * (sOriginalWidth / WIDTH), result.getCenterY()
+						* (sOriginalHeight / HEIGHT), result.getCategory().CLOGO);
 			}
 		}
 	}
