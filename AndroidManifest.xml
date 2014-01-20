@@ -52,6 +52,7 @@
 
         <service android:name="ReadDataService" >
         </service>
+        <activity android:name="tw.edu.ntu.netdb.demo.StaticStreetViewActivity"></activity>
     </application>
 
 </manifest>

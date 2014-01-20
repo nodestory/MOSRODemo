@@ -19,6 +19,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapFragment extends SupportMapFragment implements OnMarkerClickListener {
 	private GoogleMap mMap;
 	private LatLng mCurrentLatLng = null;
+	private CameraPosition mCameraPosition = null;
 	private OnPositionClickedListener mListener;
 
 	@Override
@@ -30,10 +31,23 @@ public class MapFragment extends SupportMapFragment implements OnMarkerClickList
 	public void onResume() {
 		super.onResume();
 		// TODO
-		if (mCurrentLatLng != null) {
+
+		if (mCameraPosition != null) {
 			mMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
-					.target(mCurrentLatLng).zoom(12.5f).bearing(0).tilt(0).build()));
+					.target(mCameraPosition.target).zoom(mCameraPosition.zoom)
+					.bearing(mCameraPosition.bearing).tilt(mCameraPosition.tilt).build()));
+		} else {
+			if (mCurrentLatLng != null) {
+				mMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
+						.target(mCurrentLatLng).zoom(12.5f).bearing(0).tilt(0).build()));
+			}
 		}
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		mCameraPosition = mMap.getCameraPosition();
 	}
 
 	public void setOnPositionClickedListener(OnPositionClickedListener listener) {

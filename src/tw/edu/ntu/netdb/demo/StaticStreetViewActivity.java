@@ -3,8 +3,11 @@ package tw.edu.ntu.netdb.demo;
 import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
@@ -18,11 +21,13 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
-public class StaticStreetViewFragment extends Fragment {
-	// private ImageView mStaitcStreetView;
+public class StaticStreetViewActivity extends FragmentActivity {
+	private Context mContext;
+
 	private ViewPager mPager;
 	private PagerAdapter mPagerAdapter;
 	private ImageButton mTakeButton;
@@ -31,36 +36,22 @@ public class StaticStreetViewFragment extends Fragment {
 	private DemoLocation mCurrentLocation;
 	private Bundle args;
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		args = getArguments();
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
-		View rootView = inflater.inflate(R.layout.fragment_static_streetview, null);
-		// mStaitcStreetView = (ImageView)
-		// rootView.findViewById(R.id.imageView_static_streetview);
-		mPager = (ViewPager) rootView.findViewById(R.id.pager);
-		mTakeButton = (ImageButton) rootView.findViewById(R.id.imageButton_take);
-		mTakeButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				args.putInt("category_index", mCurrentLocation.getCategorIndex());
-				args.putInt("img_res_id", mCurrentLocation.getImgResId());
-				((MainActivity) getActivity()).startRecognitionActivity(args);
-			}
-		});
-		return rootView;
-	}
+		setContentView(R.layout.fragment_static_streetview);
 
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		AppResourceManager manager = (AppResourceManager) getActivity().getApplicationContext();
+		mContext = this;
+
+		args = getIntent().getExtras();
+		AppResourceManager manager = (AppResourceManager) getApplicationContext();
 		mLocations = manager.getDemoLocaions().get((LatLng) args.get("location"));
 		mCurrentLocation = mLocations.get(0);
-		mPagerAdapter = new StreetViewPagerAdapter(getFragmentManager());
+
+		mPager = (ViewPager) findViewById(R.id.pager);
+		mPagerAdapter = new StreetImagePagerAdapter(getSupportFragmentManager());
 		mPager.setAdapter(mPagerAdapter);
 		mPager.setOnPageChangeListener(new OnPageChangeListener() {
-
 			@Override
 			public void onPageSelected(int position) {
 				mCurrentLocation = mLocations.get(position);
@@ -75,28 +66,35 @@ public class StaticStreetViewFragment extends Fragment {
 			public void onPageScrollStateChanged(int state) {
 			}
 		});
+
+		mTakeButton = (ImageButton) findViewById(R.id.imageButton_take);
+		mTakeButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				args.putInt("category_index", mCurrentLocation.getCategorIndex());
+				args.putInt("img_res_id", mCurrentLocation.getImgResId());
+				if (!((AppResourceManager) getApplicationContext()).isLoading()) {
+					Intent intent = new Intent(mContext, RecognitionActivity.class);
+					intent.putExtras(args);
+					startActivityForResult(intent, 0);
+				} else {
+					Toast.makeText(mContext, "Please try later...", Toast.LENGTH_LONG).show();
+				}
+			}
+		});
 	}
 
 	@Override
-	public void onStop() {
-		super.onStop();
-		// try {
-		// Drawable drawable = mStaitcStreetView.getDrawable();
-		// if (drawable instanceof BitmapDrawable) {
-		// BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
-		// Bitmap bitmap = bitmapDrawable.getBitmap();
-		// bitmap.recycle();
-		// bitmap = null;
-		// System.gc();
-		// }
-		// } catch (Exception e) {
-		// Log.e(getClass().getName(), e.getMessage());
-		// }
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == 0) {
+			finish();
+		}
 	}
-	
-	private class StreetViewPagerAdapter extends FragmentStatePagerAdapter {
-		public StreetViewPagerAdapter(FragmentManager fm) {
-			super(fm);
+
+	private class StreetImagePagerAdapter extends FragmentStatePagerAdapter {
+		public StreetImagePagerAdapter(FragmentManager fragmentManager) {
+			super(fragmentManager);
 		}
 
 		@Override

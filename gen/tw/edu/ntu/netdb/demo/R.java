@@ -1202,10 +1202,11 @@ containing a value of this type.
         public static final int ic_plusone_standard_off_client=0x7f020408;
         public static final int ic_plusone_tall_off_client=0x7f020409;
         public static final int ic_position=0x7f02040a;
-        public static final int ic_right=0x7f02040b;
-        public static final int ic_search=0x7f02040c;
-        public static final int ic_zoom_in=0x7f02040d;
-        public static final int ic_zoom_out=0x7f02040e;
+        public static final int ic_retry=0x7f02040b;
+        public static final int ic_right=0x7f02040c;
+        public static final int ic_search=0x7f02040d;
+        public static final int ic_zoom_in=0x7f02040e;
+        public static final int ic_zoom_out=0x7f02040f;
     }
     public static final class id {
         public static final int container=0x7f070005;
@@ -1219,6 +1220,7 @@ containing a value of this type.
         public static final int imageView_street_view=0x7f07000d;
         public static final int imageView_zoom_in=0x7f070011;
         public static final int imageView_zoom_out=0x7f070013;
+        public static final int item_retry=0x7f07001a;
         public static final int layout_zoom=0x7f070010;
         public static final int none=0x7f070000;
         public static final int normal=0x7f070001;
@@ -1251,6 +1253,7 @@ containing a value of this type.
     }
     public static final class menu {
         public static final int activity_main=0x7f0b0000;
+        public static final int activity_recognition=0x7f0b0001;
     }
     public static final class raw {
         public static final int categories=0x7f050000;

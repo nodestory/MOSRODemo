@@ -10,6 +10,9 @@ import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -67,10 +70,32 @@ public class RecognitionActivity extends Activity {
 		sOriginalHeight = mProcessedBitmap.getHeight();
 		// resize the bitmap
 		mProcessedBitmap = Bitmap.createScaledBitmap(mProcessedBitmap, WIDTH, HEIGHT, false);
-		
+
 		mLogoImageView = (ImageView) findViewById(R.id.imageView_logos);
 
 		new IdentifyTask().execute();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.activity_recognition, menu);
+		
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.item_retry:
+			setResult(1);
+			finish();
+			break;
+
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
@@ -88,6 +113,12 @@ public class RecognitionActivity extends Activity {
 			System.gc();
 		} catch (Exception e) {
 		}
+	}
+	
+	@Override
+	public void onBackPressed() {
+		setResult(0);
+		finish();
 	}
 
 	private void displayLogo(int centerX, int centerY, int category) {

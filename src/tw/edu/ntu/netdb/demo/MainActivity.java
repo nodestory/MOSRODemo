@@ -1,8 +1,6 @@
 package tw.edu.ntu.netdb.demo;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 
 import tw.edu.ntu.netdb.demo.MapFragment.OnPositionClickedListener;
 import android.app.ActionBar;
@@ -11,13 +9,9 @@ import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -30,14 +24,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	 * current dropdown position.
 	 */
 	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
-	private static final int MODE_MAP = 0;
-	private static final int MODE_STREETVIEW = 1;
-
-	private int mMode;
 
 	private ProgressDialog mDialog = null;
 	private MapFragment mMapFragment;
-	private StaticStreetViewFragment mStaticStreetViewFragment;
 	private CameraFragment mCameraFragment;
 
 	// temporary array for valid views
@@ -50,11 +39,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		setContentView(R.layout.activity_main);
 
 		mDialog = ProgressDialog.show(this, "Loading", "Please wait...");
-		
+
 		mMapFragment = new MapFragment();
 		mMapFragment.setOnPositionClickedListener(this);
 		mCameraFragment = new CameraFragment();
-		mMode = MODE_MAP;
 
 		final ActionBar actionBar = getActionBar();
 		// actionBar.setDisplayShowHomeEnabled(false);
@@ -65,17 +53,15 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 		AppResourceManager manager = (AppResourceManager) getApplicationContext();
 		manager.setDemoLocaions();
-		
+
 		// Intent intent = new Intent(this, ReadDataService.class);
 		// startService(intent);
 		new ReadResTask().execute();
 	}
 
 	@Override
-	public void onResume() {
-		super.onResume();
-		FragmentManager manager = getSupportFragmentManager();
-		manager.beginTransaction().replace(R.id.container, mMapFragment).commit();
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	@Override
@@ -148,27 +134,31 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	// return super.onOptionsItemSelected(item);
 	// }
 
-	public void savePicture(String filename, Bitmap bitmap, float rotateDegree) {
-		try {
-			String path = Environment.getExternalStorageDirectory().toString();
-			File file = new File(path, filename);
-			Matrix matrix = new Matrix();
-			matrix.preRotate(rotateDegree);
-			FileOutputStream stream = new FileOutputStream(file);
-			bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight());
-			bitmap.compress(Bitmap.CompressFormat.PNG, 20, stream);
-			stream.flush();
-			stream.close();
-
-			Uri contentUri = Uri.fromFile(file);
-			Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-			mediaScanIntent.setData(contentUri);
-			sendBroadcast(mediaScanIntent);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
+	// public void savePicture(String filename, Bitmap bitmap, float
+	// rotateDegree) {
+	// try {
+	// String path = Environment.getExternalStorageDirectory().toString();
+	// File file = new File(path, filename);
+	// Matrix matrix = new Matrix();
+	// matrix.preRotate(rotateDegree);
+	// FileOutputStream stream = new FileOutputStream(file);
+	// bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
+	// bitmap.getHeight());
+	// bitmap.compress(Bitmap.CompressFormat.PNG, 20, stream);
+	// stream.flush();
+	// stream.close();
+	//
+	// Uri contentUri = Uri.fromFile(file);
+	// Intent mediaScanIntent = new
+	// Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+	// mediaScanIntent.setData(contentUri);
+	// sendBroadcast(mediaScanIntent);
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// }
+	//
+	
 	public void startRecognitionActivity(Bitmap streetBitmap) {
 		if (!((AppResourceManager) getApplicationContext()).isLoading()) {
 			Intent intent = new Intent(this, RecognitionActivity.class);
@@ -181,12 +171,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			Toast.makeText(this, "Please try later...", Toast.LENGTH_LONG).show();
 		}
 	}
-
+	
 	public void startRecognitionActivity(Bundle args) {
 		if (!((AppResourceManager) getApplicationContext()).isLoading()) {
 			Intent intent = new Intent(this, RecognitionActivity.class);
 			intent.putExtras(args);
-			startActivity(intent);
+			startActivityForResult(intent, 0);
 		} else {
 			Toast.makeText(this, "Please try later...", Toast.LENGTH_LONG).show();
 		}
@@ -221,21 +211,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	public void OnPositionClicked(LatLng latLng) {
 		Bundle bundle = new Bundle();
 		bundle.putParcelable("location", latLng);
-		mStaticStreetViewFragment = new StaticStreetViewFragment();
-		mStaticStreetViewFragment.setArguments(bundle);
-		mMode = MODE_STREETVIEW;
-		getSupportFragmentManager().beginTransaction()
-				.replace(R.id.container, mStaticStreetViewFragment).commit();
-	}
-
-	@Override
-	public void onBackPressed() {
-		if (mMode == MODE_STREETVIEW) {
-			getSupportFragmentManager().popBackStack();
-			mMode = MODE_MAP;
-		} else {
-			super.onBackPressed();
-		}
+		Intent intent = new Intent(this, StaticStreetViewActivity.class);
+		intent.putExtras(bundle);
+		startActivityForResult(intent, 0);
 	}
 
 	private class ReadResTask extends AsyncTask<String, String, String> {
